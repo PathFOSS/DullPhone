@@ -71,13 +71,13 @@ Long answer: You need to have Developer Options and USB debugging enabled while 
 
 ## Specifications
 
-Name: Savage Blocker
-Supported Android version: 8.0 and above
-Application size: ~ 5 MB
-Maximum blocking time: ~ 48h
-Officially supported devices: Phones only (tablets and wearables have never been tested)
-Online features: None
-Analytics: None
-Developer: PathFOSS
-License: GPLv3
+Name: Savage Blocker  
+Supported Android version: 8.0 and above  
+Application size: ~ 5 MB  
+Maximum blocking time: ~ 48h  
+Officially supported devices: Phones only (tablets and wearables have never been tested)  
+Online features: None  
+Analytics: None  
+Developer: PathFOSS  
+License: GPLv3  
 
