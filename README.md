@@ -32,25 +32,25 @@ Please always verify the validity of the application you download.
 
 NB! If you cannot find your issue here please make sure to first delete storage and cache for the app and check that the "Display over other apps" and "Permit usage access" permissions are checked. If it doesn't help please create an issue in the repository.
 
-### Home button escape method
+#### Home button escape method
 
 Problem: You are able to "escape" the overlay for about 5.5 seconds using the home button if your default home launcher is not com.android.launcher3 (Android prevents app restarts for 5 seconds when home launches is visible)
 
 Solution: Press only the home button once and wait for Android to show the app overlay again. Now the app recognizes your home screen and blocks it by default.
 
-### Recent apps button escape method
+#### Recent apps button escape method
 
 Problem: You are able to "escape" the overlay for some time (and swipe the app away)  using the recent apps button if your default task manager is not com.android.launcher3
 
 Solution: Press only the recent apps button once and wait for Android to show the app overlay again. Now the app recognizes your task manager and blocks it
 
-### Spam clicking every button imaginable
+#### Spam clicking every button imaginable
 
 Problem: You may be able to escape by spamming and swiping the system navigation buttons and notifications and freeze the system temporarily (should be quite difficult)
 
 Solution: Enable Developer Options and disable all animations 
 
-### Timer is up but overlay is still showing
+#### Timer is up but overlay is still showing
 
 Problem: Timer runs out but you still cannot close the app. This is quite unlikely.
 
@@ -71,13 +71,20 @@ Long answer: You need to have Developer Options and USB debugging enabled while 
 
 ## Specifications
 
-Name: Savage Blocker  
-Supported Android version: 8.0 and above  
-Application size: ~ 5 MB  
-Maximum blocking time: ~ 48h  
-Officially supported devices: Phones only (tablets and wearables have never been tested)  
-Online features: None  
-Analytics: None  
-Developer: PathFOSS  
-License: GPLv3  
+Name: Savage Blocker
 
+Supported Android version: 8.0 and above
+
+Application size: ~ 5 MB
+
+Maximum blocking time: ~ 48h
+
+Officially supported devices: Phones only (tablets and wearables have never been tested)
+
+Online features: None
+
+Analytics: None
+
+Developer: PathFOSS
+
+License: GPLv3
