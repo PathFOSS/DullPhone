@@ -13,17 +13,7 @@
 
         <!-- Element styles -->
         <item name="android:statusBarColor">@color/black</item>
-        <item name="slideToActViewStyle">@style/SavageBlockerSlideToActViewStyle</item>
 
-    </style>
-
-    <style name="SavageBlockerSlideToActViewStyle" parent="SlideToActView">
-        <item name="text_style">bold</item>
-        <item name="text_size">14sp</item>
-        <item name="rotate_icon">false</item>
-        <item name="area_margin">2dp</item>
-        <item name="border_radius">8dp</item>
-        <item name="inner_color">@color/black</item>
     </style>
 
     <style name="SavageBlockerButtonStyle" parent="android:Widget.Material.Button.Colored">

@@ -16,12 +16,12 @@ import android.os.Looper;
 import android.provider.Settings;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import com.ncorti.slidetoact.SlideToActView;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -35,7 +35,7 @@ public class StartMenuActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor sharedPreferencesEditor;
     private ConstraintLayout mainContainer;
-    private SlideToActView confirmBlockSlideToActView;
+    private Button confirmBlockButton;
     private Thread showLayoutThread;
     private SystemNavigationTool systemNavigationTool;
     private long homePressedTime = 0;
@@ -66,8 +66,8 @@ public class StartMenuActivity extends AppCompatActivity {
             // Initialize entire layout to toggle
             mainContainer = findViewById(R.id.mainContainer);
 
-            // Initialize SlideToActView for blocking the phone
-            confirmBlockSlideToActView = findViewById(R.id.confirmBlockSlideToActView);
+            // Initialize Button for blocking the phone
+            confirmBlockButton = findViewById(R.id.confirmBlockButton);
 
             // Initialize NumberPickers for time selection
             NumberPicker dayPicker = findViewById(R.id.dayNumberPicker);
@@ -80,14 +80,13 @@ public class StartMenuActivity extends AppCompatActivity {
             setNumberPickerValues(minutePicker,59, "m");
 
             // Create onSlideCompleted listener to see when user wants to start block
-            confirmBlockSlideToActView.setOnSlideCompleteListener(slideToActView -> {
+            confirmBlockButton.setOnClickListener( v -> {
                 if (Settings.canDrawOverlays(getApplicationContext()) && isAccessGranted()) {
                     sharedPreferencesEditor.putLong("blockedUntil", modifyCalendarInstance(Calendar.getInstance(), dayPicker.getValue(), hourPicker.getValue(), minutePicker.getValue())).apply();
                     runPreliminaryChecks();
                 } else {
                     checkUsagePermission();
                     checkOverlayPermission();
-                    confirmBlockSlideToActView.setCompleted(false, true);
                 }
             });
         }));
@@ -148,14 +147,12 @@ public class StartMenuActivity extends AppCompatActivity {
             public void onFinish () {
                 dialog.dismiss();
                 sharedPreferencesEditor.putBoolean("isBlocking", false).apply();
-                confirmBlockSlideToActView.setCompleted(false, true);
             }
         }.start();
 
         // Create OnClickListener for confirming the block
         dialog.findViewById(R.id.confirmImageButton).setOnClickListener( v -> {
             dialog.dismiss();
-            confirmBlockSlideToActView.setCompleted(false, true);
             sharedPreferencesEditor.putBoolean("isBlocking", true).apply();
             startService();
         });
@@ -163,7 +160,6 @@ public class StartMenuActivity extends AppCompatActivity {
         // Create OnClickListener for canceling the block
         dialog.findViewById(R.id.cancelImageButton).setOnClickListener( v -> {
             dialog.dismiss();
-            confirmBlockSlideToActView.setCompleted(false, true);
             sharedPreferencesEditor.putBoolean("isBlocking", false).apply();
         });
     }
@@ -190,7 +186,6 @@ public class StartMenuActivity extends AppCompatActivity {
             }
         } else {
             if (!sharedPreferences.getBoolean("isBlocking", false)) {
-                confirmBlockSlideToActView.setCompleted(false, true);
                 Toast.makeText(getApplicationContext(), "Unable to start block. Please select a valid time.", Toast.LENGTH_SHORT).show();
             }
         }

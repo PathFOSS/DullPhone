@@ -12,7 +12,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/confirmBlockSlideToActView"
+        app:layout_constraintBottom_toTopOf="@id/confirmBlockButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -67,15 +67,15 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <com.ncorti.slidetoact.SlideToActView
-        android:id="@+id/confirmBlockSlideToActView"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/confirmBlockButton"
+        android:theme="@style/SavageBlockerButtonStyle"
         android:layout_width="0dp"
-        android:layout_height="30dp"
+        android:layout_height="45dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:slider_icon="@drawable/icon_phone_blocked"
-        app:text_size="10sp"
-        app:text="@string/sliderCallToAction"/>
+        android:background="@drawable/button_background"
+        android:text="@string/confirmButtonText"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
