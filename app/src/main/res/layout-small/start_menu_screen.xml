@@ -7,53 +7,34 @@
     android:padding="5dp"
     android:background="@color/black">
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/tabLayoutCardView"
-        android:layout_width="0dp"
-        android:layout_height="60dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:strokeWidth="2dp"
-        app:strokeColor="@color/natural_white"
-        app:cardCornerRadius="8dp">
-
-        <!-- A vertical divider will be drawn in here programmatically -->
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/dateTabLayout"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:background="@color/black"
-            app:tabInlineLabel="true"
-            app:tabIndicatorHeight="0dp"
-            app:tabTextColor="@color/gray"
-            app:tabTextAppearance="@style/RobotoTextViewStyle"
-            app:tabSelectedTextColor="@color/natural_white">
-            
-            <com.google.android.material.tabs.TabItem
-                android:id="@+id/todayTabItem"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:icon="@drawable/icon_check_mark"
-                android:text="@string/tabItemToday"/>
-            
-            <com.google.android.material.tabs.TabItem
-                android:id="@+id/tomorrowTabItem"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/tabItemTomorrow"/>
-            
-        </com.google.android.material.tabs.TabLayout>
-    </com.google.android.material.card.MaterialCardView>
-
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/timeSelector"
+        android:id="@+id/timeSelectorLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/tabLayoutCardView"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/confirmBlockSlideToActView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
+
+        <NumberPicker
+            android:id="@+id/dayNumberPicker"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/colonTextView1"/>
+
+        <TextView
+            android:id="@+id/colonTextView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/dayNumberPicker"
+            app:layout_constraintEnd_toStartOf="@id/hourNumberPicker"
+            android:layout_marginHorizontal="5dp"
+            android:text="@string/timerColon"/>
 
         <NumberPicker
             android:id="@+id/hourNumberPicker"
@@ -61,11 +42,11 @@
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/colonTextView"/>
-        
+            app:layout_constraintStart_toEndOf="@id/colonTextView1"
+            app:layout_constraintEnd_toStartOf="@id/colonTextView2"/>
+
         <TextView
-            android:id="@+id/colonTextView"
+            android:id="@+id/colonTextView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
@@ -74,14 +55,14 @@
             app:layout_constraintEnd_toStartOf="@id/minuteNumberPicker"
             android:layout_marginHorizontal="5dp"
             android:text="@string/timerColon"/>
-        
+
         <NumberPicker
             android:id="@+id/minuteNumberPicker"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/colonTextView"
+            app:layout_constraintStart_toEndOf="@id/colonTextView2"
             app:layout_constraintEnd_toEndOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -89,12 +70,12 @@
     <com.ncorti.slidetoact.SlideToActView
         android:id="@+id/confirmBlockSlideToActView"
         android:layout_width="0dp"
-        android:layout_height="42dp"
+        android:layout_height="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:slider_icon="@drawable/icon_phone_blocked"
         app:text_size="10sp"
         app:text="@string/sliderCallToAction"/>
-    
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,8 +7,6 @@
     <string name="disclaimerPointThree">3. The app requires the \'Can Draw Overlays\' and \'Permit Usage Access\' permissions for the block overlay to function. The usage data will only be used by the app locally when the block is turned on. The app has zero analytics or telemetry.</string>
     <string name="disclaimerPointFour">4. Savage Blocker falls under the GPLv3 license. No liability caused by the misuse or malfunctioning of the Savage Blocker application shall be placed on the developer. </string>
     <string name="disclaimerButton">I Accept These Risks</string>
-    <string name="tabItemToday">Today</string>
-    <string name="tabItemTomorrow">Tomorrow</string>
     <string name="timerColon">:</string>
     <string name="sliderCallToAction">Swipe to Set Block</string>
     <string name="confirmationPopupTitle">Block Phone For</string>
@@ -35,4 +33,5 @@
     <string name="minutesToolTip">Minutes</string>
     <string name="secondsToolTip">Seconds</string>
     <string name="blockerImageDescription">Savage Blocker skull</string>
+    <string name="startMenuTitle">Block your device</string>
 </resources>

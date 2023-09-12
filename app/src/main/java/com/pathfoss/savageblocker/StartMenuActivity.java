@@ -9,8 +9,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -18,17 +16,12 @@ import android.os.Looper;
 import android.provider.Settings;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-
-import com.google.android.material.tabs.TabLayout;
 import com.ncorti.slidetoact.SlideToActView;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -42,11 +35,9 @@ public class StartMenuActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor sharedPreferencesEditor;
     private ConstraintLayout mainContainer;
-    private TabLayout tabLayout;
     private SlideToActView confirmBlockSlideToActView;
     private Thread showLayoutThread;
     private SystemNavigationTool systemNavigationTool;
-    private int tabSelected = 0;
     private long homePressedTime = 0;
     private long tasksPressedTime = 0;
 
@@ -79,45 +70,19 @@ public class StartMenuActivity extends AppCompatActivity {
             confirmBlockSlideToActView = findViewById(R.id.confirmBlockSlideToActView);
 
             // Initialize NumberPickers for time selection
+            NumberPicker dayPicker = findViewById(R.id.dayNumberPicker);
             NumberPicker hourPicker = findViewById(R.id.hourNumberPicker);
             NumberPicker minutePicker = findViewById(R.id.minuteNumberPicker);
 
             // Set NumberPicker values for time selection
-            setNumberPickerValues(hourPicker,23, Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
-            setNumberPickerValues(minutePicker,59, Calendar.getInstance().get(Calendar.MINUTE));
-
-            // Set up TabLayout and draw middle divider
-            tabLayout = findViewById(R.id.dateTabLayout);
-            LinearLayout tabItem = (LinearLayout) tabLayout.getChildAt(0);
-            tabItem.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
-            GradientDrawable drawable = new GradientDrawable();
-            drawable.setColor(Color.WHITE);
-            drawable.setSize(5, 5);
-            tabItem.setDividerDrawable(drawable);
-
-            // Create OnTabSelectedListener for values "Today" and "Tomorrow"
-            tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-                @Override
-                public void onTabSelected(TabLayout.Tab tab) {
-                    tabSelected = tabLayout.getSelectedTabPosition();
-                    tab.setIcon(R.drawable.icon_check_mark);
-                }
-
-                @Override
-                public void onTabUnselected(TabLayout.Tab tab) {
-                    tab.setIcon(null);
-                }
-
-                @Override
-                public void onTabReselected(TabLayout.Tab tab) {
-                    tab.setIcon(R.drawable.icon_check_mark);
-                }
-            });
+            setNumberPickerValues(dayPicker,2, "d");
+            setNumberPickerValues(hourPicker,23, "h");
+            setNumberPickerValues(minutePicker,59, "m");
 
             // Create onSlideCompleted listener to see when user wants to start block
             confirmBlockSlideToActView.setOnSlideCompleteListener(slideToActView -> {
                 if (Settings.canDrawOverlays(getApplicationContext()) && isAccessGranted()) {
-                    sharedPreferencesEditor.putLong("blockedUntil", modifyCalendarInstance(Calendar.getInstance(), tabSelected, hourPicker.getValue(), minutePicker.getValue())).apply();
+                    sharedPreferencesEditor.putLong("blockedUntil", modifyCalendarInstance(Calendar.getInstance(), dayPicker.getValue(), hourPicker.getValue(), minutePicker.getValue())).apply();
                     runPreliminaryChecks();
                 } else {
                     checkUsagePermission();
@@ -130,9 +95,15 @@ public class StartMenuActivity extends AppCompatActivity {
     }
 
     // Create method to set NumberPicker values
-    private void setNumberPickerValues(NumberPicker numberPicker,  int maxValue, int currentValue) {
+    private void setNumberPickerValues(NumberPicker numberPicker,  int maxValue, String timeUnit) {
+        String[] timePickerArray = new String[maxValue + 1];
+        for (int i=0; i <= maxValue; i++) {
+            timePickerArray[i] = i + " " + timeUnit;
+        }
+
+        numberPicker.setValue(0);
         numberPicker.setMaxValue(maxValue);
-        numberPicker.setValue(currentValue);
+        numberPicker.setDisplayedValues(timePickerArray);
     }
 
     // Create method to show and return dialogs
@@ -200,9 +171,8 @@ public class StartMenuActivity extends AppCompatActivity {
     // Create method to return the time requested in milliseconds with the Calendar utility
     private long modifyCalendarInstance (Calendar calendar, int daysToAdd, int hourOfDay, int minuteOfHour) {
         calendar.add(Calendar.DATE, daysToAdd);
-        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-        calendar.set(Calendar.MINUTE, minuteOfHour);
-        calendar.set(Calendar.SECOND, 0);
+        calendar.add(Calendar.HOUR_OF_DAY, hourOfDay);
+        calendar.add(Calendar.MINUTE, minuteOfHour);
         return calendar.getTimeInMillis();
     }
 
