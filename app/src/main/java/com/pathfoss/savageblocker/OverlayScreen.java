@@ -13,12 +13,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import static android.content.Context.WINDOW_SERVICE;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.widget.NestedScrollView;
 import java.util.Calendar;
 import java.util.List;
 
@@ -32,10 +29,12 @@ public class OverlayScreen {
     private final SharedPreferences sharedPreferences;
     private final SharedPreferences.Editor sharedPreferencesEditor;
     private final ProgressBar progressBar;
-    private final TextView hourText, minuteText, secondText;
-    private final ImageButton imageButton;
-    private final ImageView logoImageView;
-    private boolean toggledHelpOn = false;
+    private final TextView hourText;
+    private final TextView minuteText;
+    private final TextView secondText;
+    private final int tapsToUnlock = 2500;
+    private boolean tapTextToggled = false;
+    private int tapCount = 1;
 
     @SuppressLint("InflateParams")
     public OverlayScreen(Context context){
@@ -55,33 +54,30 @@ public class OverlayScreen {
         hourText = view.findViewById(R.id.hourTextView);
         minuteText = view.findViewById(R.id.minuteTextView);
         secondText = view.findViewById(R.id.secondTextView);
-        
-        imageButton = view.findViewById(R.id.helperImageButton);
-        logoImageView = view.findViewById(R.id.skullImageView);
+
+        ImageButton imageButton = view.findViewById(R.id.helperImageButton);
         progressBar = view.findViewById(R.id.progress_bar);
 
-        ConstraintLayout timeBlock = view.findViewById(R.id.timerLayout);
-        NestedScrollView helperBlock = view.findViewById(R.id.helperScrollView);
-        
+        TextView toggleTapsTextView = view.findViewById(R.id.toggleTapsTextView);
+
         // Create OnClickListener to toggle help section
-        imageButton.setOnClickListener( v -> {
-            if (toggledHelpOn) {
-                toggledHelpOn = false;
-                logoImageView.setVisibility(View.VISIBLE);
-                progressBar.setVisibility(View.VISIBLE);
-                timeBlock.setVisibility(View.VISIBLE);
-                helperBlock.setVisibility(View.GONE);
-                imageButton.setBackgroundResource(R.drawable.icon_question_mark);
+        imageButton.setOnClickListener(v -> {
+            if (tapTextToggled) {
+                toggleTapsTextView.setVisibility(View.GONE);
+                tapTextToggled = false;
             } else {
-                toggledHelpOn = true;
-                logoImageView.setVisibility(View.GONE);
-                progressBar.setVisibility(View.GONE);
-                timeBlock.setVisibility(View.GONE);
-                helperBlock.setVisibility(View.VISIBLE);
-                imageButton.setBackgroundResource(R.drawable.icon_cancel_filled);
+                toggleTapsTextView.setVisibility(View.VISIBLE);
+                tapTextToggled = true;
             }
         });
-        
+
+        // Create OnClickListener for early block exit
+        view.setOnClickListener( v -> {
+            tapCount += 1;
+            String tapsLeftText = "Taps left to unblock: " + (tapsToUnlock - tapCount);
+            toggleTapsTextView.setText(tapsLeftText);
+        });
+
         // Start all timers
         startBlockTimer();
         startProgressTimer();
@@ -120,19 +116,46 @@ public class OverlayScreen {
                         createRestartAppThread();
                     }
                 }
+
+                // Check is user has enough taps to end block early
+                if (tapCount >= tapsToUnlock) {
+                    cancel();
+                    endBlock();
+                }
             }
 
             @Override
             public void onFinish() {
-
-                // Reset SharedPreferences and close overlay
-                sharedPreferencesEditor.putLong("blockedUntil", 0).apply();
-                sharedPreferencesEditor.putBoolean("isBlocking", false).apply();
-                context.stopService(new Intent(context, OverlayService.class));
-                createRemoveOverlayThread();
-                createRestartAppThread();
+                endBlock();
             }
         }.start();
+    }
+
+    // Create method to set smoother progress in ProgressBar
+    private void startProgressTimer() {
+        long timeLeft = sharedPreferences.getLong("blockedUntil", 0) - Calendar.getInstance().getTimeInMillis();
+
+        // Set timer to run every 10 milliseconds
+        new CountDownTimer(timeLeft, 10) {
+            @Override
+            public void onTick(long l) {
+                progressBar.setProgress(Math.round(((float) (timeLeft - l) / (float) timeLeft) * (10000)));
+            }
+            @Override
+            public void onFinish() {
+            }
+        }.start();
+    }
+
+    // Create method to end block upon request
+    private void endBlock () {
+
+        // Reset SharedPreferences and close overlay
+        sharedPreferencesEditor.putLong("blockedUntil", 0).apply();
+        sharedPreferencesEditor.putBoolean("isBlocking", false).apply();
+        context.stopService(new Intent(context, OverlayService.class));
+        createRemoveOverlayThread();
+        createRestartAppThread();
     }
 
     // Create method to remove and invalidate the overlay screen
@@ -154,22 +177,6 @@ public class OverlayScreen {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             context.startActivity(intent);
         }).start();
-    }
-
-    // Create method to set smoother progress in ProgressBar
-    private void startProgressTimer() {
-        long timeLeft = sharedPreferences.getLong("blockedUntil", 0) - Calendar.getInstance().getTimeInMillis();
-
-        // Set timer to run every 10 milliseconds
-        new CountDownTimer(timeLeft, 10) {
-            @Override
-            public void onTick(long l) {
-                progressBar.setProgress(Math.round(((float) (timeLeft - l) / (float) timeLeft) * (10000)));
-            }
-            @Override
-            public void onFinish() {
-            }
-        }.start();
     }
 
     // Create method to start the overlay screen from service

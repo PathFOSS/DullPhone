@@ -16,17 +16,6 @@
     <string name="settingsLink">Open Settings</string>
     <string name="usageAccessOverlayPermissionTitle">Usage access missing</string>
     <string name="usageAccessOverlayPermissionText"><![CDATA[To change this permission, you must enable the \'Permit usage access\' in Settings > Apps]]></string>
-    <string name="firstHelperTitle">Can I end the block early?</string>
-    <string name="firstHelperText">This is only possible if you have enabled Developer Options, enabled USB debugging, and set the default USB preference to File Transfer</string>
-    <string name="secondHelperTitle">How can I end the block?</string>
-    <string name="secondHelperText1">1. Download SDK Platform Tools from developer.android.com (Linux, Windows, or Mac)</string>
-    <string name="secondHelperText2">2. Unzip the zip file into a folder</string>
-    <string name="secondHelperText3">3. Launch a terminal or PowerShell</string>
-    <string name="secondHelperText4">4. Type in cd \'PATH\', where \'PATH\' is the full path to the platform-tools folder</string>
-    <string name="secondHelperText5">5. Connect your phone via USB and allow file transfer</string>
-    <string name="secondHelperText6">6. Type in \'adb shell am force-stop com.pathfoss.savageblocker\' and press enter</string>
-    <string name="secondHelperText7"><![CDATA[7. Go to your phone Settings -> Apps -> Savage Blocker and clear storage]]></string>
-    <string name="helperSectionDisclaimer">* If you manage to remove the block early by any other means, please create an issue on GitHub</string>
     <string name="helperButtonDescription">View early block removal guide</string>
     <string name="hoursToolTip">Hours</string>
     <string name="minutesToolTip">Minutes</string>
@@ -34,4 +23,5 @@
     <string name="blockerImageDescription">Savage Blocker skull</string>
     <string name="startMenuTitle">Block your device</string>
     <string name="confirmButtonText">Confirm</string>
+    <string name="tapCounterHelper">Taps left to unblock: 2500</string>
 </resources>
