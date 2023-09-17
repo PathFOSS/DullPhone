@@ -16,12 +16,11 @@ public class OverlayService extends Service {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
+    // Initialize overlay from the OverlayScreen class
     @Override
     public void onCreate() {
         super.onCreate();
-
-        // Initialize overlay from the OverlayScreen class
-        (new OverlayScreen(this)).initializeOverlay();
+        (new OverlayScreen(this)).createOverlay();
         launchOverlayAsForeground();
     }
 

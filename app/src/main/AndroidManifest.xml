@@ -9,6 +9,22 @@
     <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
 
+    <!-- Allow querying default dialer -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.DIAL" />
+            <category android:name="android.intent.category.DEFAULT"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.HOME"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER"/>
+        </intent>
+    </queries>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -22,8 +38,7 @@
         <service
             android:name="com.pathfoss.savageblocker.OverlayService"
             android:enabled="true"
-            android:exported="true"
-            android:stopWithTask="true"/>
+            android:stopWithTask="false"/>
 
         <!-- Set parameters for main activity -->
         <activity android:name="com.pathfoss.savageblocker.StartMenuActivity"

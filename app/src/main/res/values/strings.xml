@@ -21,7 +21,14 @@
     <string name="minutesToolTip">Minutes</string>
     <string name="secondsToolTip">Seconds</string>
     <string name="blockerImageDescription">Savage Blocker skull</string>
-    <string name="startMenuTitle">Block your device</string>
-    <string name="confirmButtonText">Confirm</string>
+    <string name="startMenuTitle">Remove distractions</string>
+    <string name="confirmButtonText">Block Device</string>
     <string name="tapCounterHelper">Taps left to unblock: 2500</string>
+    <string name="appsImageButtonText">See whitelisted apps</string>
+    <string name="clickToggleImageButtonText">Enable alternative exit</string>
+    <string name="phoneImageButtonText">Open the phone app</string>
+    <string name="whiteListNestedScrollViewText">View whitelisted apps</string>
+    <string name="whitelistAppButtonText">Whitelist app list</string>
+    <string name="whiteListDialogTitle">Tap to allow</string>
+    <string name="listOfApps">List of apps</string>
 </resources>

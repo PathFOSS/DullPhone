@@ -1,132 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="10dp"
+    android:padding="20dp"
     android:background="@color/black">
 
     <!-- Block overlay layout -->
-    <TextView
-        android:id="@+id/toggleTapsTextView"
-        style="@style/RobotoTextViewStyle"
-        android:visibility="gone"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/whiteListNestedScrollView"
         android:layout_width="0dp"
-        android:layout_height="60dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/helperImageButton"
-        android:padding="0dp"
-        android:gravity="center_vertical"
-        android:textColor="@color/gray"
-        android:text="@string/tapCounterHelper"/>
-
-    <ImageButton
-        android:id="@+id/helperImageButton"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:background="@drawable/icon_question_mark"
-        android:backgroundTint="@color/gray"
-        android:contentDescription="@string/helperButtonDescription"/>
-
-    <ImageView
-        android:id="@+id/skullImageView"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/timerLayout"
+        app:layout_constraintBottom_toTopOf="@id/tapToggleImageButton"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:scaleX="0.5"
-        android:scaleY="0.5"
-        android:background="@drawable/icon_skull"
-        android:contentDescription="@string/blockerImageDescription"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        android:paddingVertical="134dp"
+        android:contentDescription="@string/whiteListNestedScrollViewText">
 
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        style="@style/CircularDeterminateProgressBar"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        <LinearLayout
+            android:id="@+id/whitelistAppsLinearLayout"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="38dp"/>
+
+    </androidx.core.widget.NestedScrollView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/timerLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintVertical_bias="0.85"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginVertical="28dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/hourLayout"
             android:layout_width="80dp"
-            android:layout_height="wrap_content"
+            android:layout_height="120dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/colonLayout1"
             app:layout_constraintHorizontal_chainStyle="packed">
-            
+
             <!-- Text changed programmatically -->
-            <TextView
-                android:id="@+id/hourTextView"
-                style="@style/TitleText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:textSize="30sp"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/hourToolTipTextView"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
-            
             <TextView
                 android:id="@+id/hourToolTipTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/hourTextView"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/hourTextView"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:gravity="center"
                 android:textColor="@color/gray"
                 android:text="@string/hoursToolTip"/>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/colonLayout1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/hourLayout"
-            app:layout_constraintEnd_toStartOf="@id/minuteLayout">
-
             <TextView
-                android:id="@+id/colonTextView1"
+                android:id="@+id/hourTextView"
                 style="@style/TitleText"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/emptyTextView1"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
                 android:textSize="30sp"
-                android:text="@string/timerColon"/>
-
-            <TextView
-                android:id="@+id/emptyTextView1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/colonTextView1"
+                app:layout_constraintTop_toBottomOf="@id/hourToolTipTextView"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
@@ -134,9 +74,41 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/colonLayout1"
+            android:layout_width="wrap_content"
+            android:layout_height="120dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/hourLayout"
+            app:layout_constraintEnd_toStartOf="@id/minuteLayout">
+
+            <TextView
+                android:id="@+id/emptyTextView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/colonTextView1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <TextView
+                android:id="@+id/colonTextView1"
+                style="@style/TitleText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/emptyTextView1"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:textSize="30sp"
+                android:text="@string/timerColon"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/minuteLayout"
             android:layout_width="80dp"
-            android:layout_height="wrap_content"
+            android:layout_height="120dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@id/colonLayout1"
@@ -144,66 +116,66 @@
 
             <!-- Text changed programmatically -->
             <TextView
-                android:id="@+id/minuteTextView"
-                style="@style/TitleText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/minuteToolTipTextView"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:textSize="30sp"/>
-
-            <TextView
                 android:id="@+id/minuteToolTipTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/minuteTextView"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/minuteTextView"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:gravity="center"
                 android:textColor="@color/gray"
                 android:text="@string/minutesToolTip"/>
 
+            <TextView
+                android:id="@+id/minuteTextView"
+                style="@style/TitleText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/minuteToolTipTextView"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:textSize="30sp"/>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/colonLayout2"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="120dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@id/minuteLayout"
             app:layout_constraintEnd_toStartOf="@id/secondLayout">
 
             <TextView
+                android:id="@+id/emptyTextView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/colonTextView2"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <TextView
                 android:id="@+id/colonTextView2"
                 style="@style/TitleText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/emptyTextView2"
+                app:layout_constraintTop_toBottomOf="@id/emptyTextView2"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:textSize="30sp"
                 android:text="@string/timerColon"/>
-
-            <TextView
-                android:id="@+id/emptyTextView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/colonTextView2"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/secondLayout"
             android:layout_width="80dp"
-            android:layout_height="wrap_content"
+            android:layout_height="120dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@id/colonLayout2"
@@ -211,28 +183,122 @@
 
             <!-- Text changed programmatically -->
             <TextView
-                android:id="@+id/secondTextView"
-                style="@style/TitleText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/secondToolTipTextView"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:textSize="30sp"/>
-
-            <TextView
                 android:id="@+id/secondToolTipTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/secondTextView"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/secondTextView"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:gravity="center"
                 android:textColor="@color/gray"
                 android:text="@string/secondsToolTip"/>
 
+            <TextView
+                android:id="@+id/secondTextView"
+                style="@style/TitleText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/secondToolTipTextView"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:textSize="30sp"/>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        style="@style/CircularDeterminateProgressBar"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <ImageView
+        android:id="@+id/skullImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:scaleX="0.5"
+        android:scaleY="0.5"
+        android:background="@drawable/icon_skull"
+        android:contentDescription="@string/blockerImageDescription"/>
+
+    <TextView
+        android:id="@+id/tapsLeftTextView"
+        style="@style/TitleText"
+        android:visibility="gone"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="28dp"/>
+
+    <ImageButton
+        android:id="@+id/appsImageButton"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/tapToggleImageButton"
+        android:layout_marginVertical="28dp"
+        android:background="@drawable/apps_button_background"
+        android:contentDescription="@string/appsImageButtonText"/>
+
+    <ImageButton
+        android:id="@+id/tapToggleImageButton"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        app:layout_constraintStart_toEndOf="@id/appsImageButton"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/phoneImageButton"
+        android:layout_marginVertical="28dp"
+        android:background="@drawable/fingerprint_button_background"
+        android:contentDescription="@string/clickToggleImageButtonText"/>
+
+    <ImageButton
+        android:id="@+id/phoneImageButton"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        app:layout_constraintStart_toEndOf="@id/tapToggleImageButton"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginVertical="28dp"
+        android:background="@drawable/phone_call_button_background"
+        android:contentDescription="@string/phoneImageButtonText" />
+
+    <ProgressBar
+        android:id="@+id/appsLoadingProgressBar"
+        android:visibility="gone"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/tapToggleImageButton"
+        android:layout_marginVertical="28dp"
+        android:indeterminate="true"
+        android:indeterminateDrawable="@drawable/spinning_progress_bar_background"
+        android:progress="0"/>
+
+    <ProgressBar
+        android:id="@+id/phoneLoadingProgressBar"
+        android:visibility="gone"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tapToggleImageButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginVertical="28dp"
+        android:indeterminate="true"
+        android:indeterminateDrawable="@drawable/spinning_progress_bar_background"
+        android:progress="0"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

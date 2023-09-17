@@ -2,72 +2,68 @@ package com.pathfoss.savageblocker;
 
 import android.app.AppOpsManager;
 import android.app.Dialog;
-import android.app.usage.UsageStats;
-import android.app.usage.UsageStatsManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.NumberPicker;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 public class StartMenuActivity extends AppCompatActivity {
 
     // Create global objects and variables
+    private final ArrayList<String> allowedApps = new ArrayList<>();
+    private PackageManager packageManager;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor sharedPreferencesEditor;
     private ConstraintLayout mainContainer;
-    private Button confirmBlockButton;
-    private Thread showLayoutThread;
-    private SystemNavigationTool systemNavigationTool;
-    private long homePressedTime = 0;
-    private long tasksPressedTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Initialize SharedPreferences
+        // Initialize global items
         sharedPreferences = getSharedPreferences("SavageBlocker", MODE_PRIVATE);
         sharedPreferencesEditor = sharedPreferences.edit();
+        packageManager = getPackageManager();
 
         // Check if user opens app first time or returns with an active block
-        if(sharedPreferences.getBoolean("isBlocking", false)) {
-            runPreliminaryChecks();
-        } else if (sharedPreferences.getBoolean("firstLaunch", true)) {
-            showDisclaimer();
-        } else {
-            initializeLayout();
+        if (sharedPreferences.getLong("blockedUntil", 0) <= System.currentTimeMillis()) {
+            if (sharedPreferences.getBoolean("firstLaunch", true)) {
+                showDisclaimer();
+            } else {
+                initializeLayout();
+            }
         }
     }
 
-    private void initializeLayout () {
-        showLayoutThread = new Thread(() -> runOnUiThread(() -> {
-            setContentView(R.layout.start_menu_screen);
+    // Create method to display the main menu
+    private void initializeLayout() {
+        new Handler(Looper.getMainLooper()).post(() -> {
 
             // Initialize entire layout to toggle
+            setContentView(R.layout.start_menu_screen);
             mainContainer = findViewById(R.id.mainContainer);
-
-            // Initialize Button for blocking the phone
-            confirmBlockButton = findViewById(R.id.confirmBlockButton);
 
             // Initialize NumberPickers for time selection
             NumberPicker dayPicker = findViewById(R.id.dayNumberPicker);
@@ -75,28 +71,33 @@ public class StartMenuActivity extends AppCompatActivity {
             NumberPicker minutePicker = findViewById(R.id.minuteNumberPicker);
 
             // Set NumberPicker values for time selection
-            setNumberPickerValues(dayPicker,2, "d");
-            setNumberPickerValues(hourPicker,23, "h");
-            setNumberPickerValues(minutePicker,59, "m");
+            setNumberPickerValues(dayPicker, 365, "d");
+            setNumberPickerValues(hourPicker, 23, "h");
+            setNumberPickerValues(minutePicker, 59, "m");
 
-            // Create onSlideCompleted listener to see when user wants to start block
-            confirmBlockButton.setOnClickListener( v -> {
+            // Create a button listener to see when user wants to start block
+            findViewById(R.id.confirmBlockButton).setOnClickListener(v -> {
                 if (Settings.canDrawOverlays(getApplicationContext()) && isAccessGranted()) {
-                    sharedPreferencesEditor.putLong("blockedUntil", modifyCalendarInstance(Calendar.getInstance(), dayPicker.getValue(), hourPicker.getValue(), minutePicker.getValue())).apply();
-                    runPreliminaryChecks();
+                    sharedPreferencesEditor.putInt("tapsToUnlock", 5000);
+                    createConfirmationDialog(createDialog(R.layout.block_confirmation_dialog), modifyCalendarInstance(Calendar.getInstance(), dayPicker.getValue(), hourPicker.getValue(), minutePicker.getValue()));
                 } else {
                     checkUsagePermission();
                     checkOverlayPermission();
                 }
             });
-        }));
-        showLayoutThread.start();
+
+            // Determine default dialer
+            String defaultDialer = Objects.requireNonNull(packageManager.resolveActivity(new Intent(Intent.ACTION_DIAL), PackageManager.MATCH_DEFAULT_ONLY)).activityInfo.packageName;
+            sharedPreferencesEditor.putString("defaultDialer", defaultDialer).apply();
+
+            findViewById(R.id.appsImageButton).setOnClickListener(v -> createWhitelistDialog());
+        });
     }
 
     // Create method to set NumberPicker values
-    private void setNumberPickerValues(NumberPicker numberPicker,  int maxValue, String timeUnit) {
+    private void setNumberPickerValues(NumberPicker numberPicker, int maxValue, String timeUnit) {
         String[] timePickerArray = new String[maxValue + 1];
-        for (int i=0; i <= maxValue; i++) {
+        for (int i = 0; i <= maxValue; i++) {
             timePickerArray[i] = i + " " + timeUnit;
         }
 
@@ -107,7 +108,7 @@ public class StartMenuActivity extends AppCompatActivity {
 
     // Create method to show and return dialogs
     private Dialog createDialog(int layoutFile) {
-        Dialog dialog = new Dialog(StartMenuActivity.this);
+        Dialog dialog = new Dialog(this);
         dialog.setContentView(layoutFile);
         Objects.requireNonNull(dialog.getWindow()).setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.setCancelable(false);
@@ -116,56 +117,182 @@ public class StartMenuActivity extends AppCompatActivity {
     }
 
     // Create method to show disclaimer dialog on first boot
-    private void showDisclaimer () {
+    private void showDisclaimer() {
         Dialog dialog1 = createDialog(R.layout.disclaimer_dialog);
 
-        dialog1.findViewById(R.id.button).setOnClickListener( v -> {
+        dialog1.findViewById(R.id.button).setOnClickListener(v -> {
             dialog1.dismiss();
             initializeLayout();
             sharedPreferencesEditor.putBoolean("firstLaunch", false).apply();
         });
     }
 
-    // Create method to show confirmation dialog before the phone block starts
-    private void createConfirmationDialog () {
-        Dialog dialog = createDialog(R.layout.block_confirmation_dialog);
-        TextView tv = dialog.findViewById(R.id.timeTextView);
+    // Create method to allow to select whitelisted applications
+    private void createWhitelistDialog() {
 
-        // Show decreases in blocking time every second and close dialog if time runs out
-        new CountDownTimer(sharedPreferences.getLong("blockedUntil", 0) - System.currentTimeMillis(), 1000) {
-            @Override
-            public void onTick(long l) {
-                int hours = (int) l / 3600000;
-                int minutes = (int) (l - hours * 3600000) / 60000;
-                int seconds = (int) (l - hours * 3600000 - minutes * 60000) / 1000;
+        // Initialize required whitelist elements
+        Dialog dialog = createDialog(R.layout.whitelist_dialog);
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        List<ResolveInfo> appList = packageManager.queryIntentActivities(intent, 0);
+        LinearLayout whitelistLinearLayout = dialog.findViewById(R.id.whitelistLinearLayout);
 
-                String timeText = hours + "h " + minutes + "m " + seconds + "s";
-                tv.setText(timeText);
+        // Create layout for each enabled app
+        for (ResolveInfo resolveInfo : appList) {
+
+            // Define package name
+            String packageName = resolveInfo.activityInfo.packageName;
+
+            if (!packageName.equals("com.pathfoss.savageblocker") && !packageName.equals("com.android.settings")) {
+
+                // Initialize layout elements
+                RelativeLayout appContainer = new RelativeLayout(StartMenuActivity.this);
+                ImageView appIcon = new ImageView(StartMenuActivity.this);
+                TextView appName = new TextView(StartMenuActivity.this);
+
+                // Stylize app containers with identifiers
+                try {
+                    appContainer.setBackground(AppCompatResources.getDrawable(StartMenuActivity.this, R.drawable.button_background));
+                    appContainer.setTag(packageName);
+                    appIcon.setBackground(packageManager.getApplicationIcon(packageName));
+                    appName.setTextSize(20);
+                    appName.setTextColor(getResources().getColor(R.color.black, getTheme()));
+                    appName.setText((String) packageManager.getApplicationLabel(packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA)));
+                } catch (Exception ignored) {}
+
+                // Add icons and names in containers
+                appContainer.addView(appName);
+                appContainer.addView(appIcon);
+                whitelistLinearLayout.addView(appContainer);
+
+                // Set layout parameters for layouts
+                appContainer.setLayoutParams(createLayoutParams(false, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 0, 0, 0, 0));
+                appIcon.setLayoutParams(createLayoutParams(true, 100, 100, RelativeLayout.ALIGN_PARENT_LEFT, 20, 20, 20));
+                appName.setLayoutParams(createLayoutParams(true, RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.ALIGN_PARENT_RIGHT, 20, 20, 20));
+
+                // Highlight old whitelist applications
+                if (sharedPreferences.getStringSet("allowedApplications", new HashSet<>()).contains(packageName)) {
+                    allowedApps.add((String) packageName);
+                    appContainer.setBackgroundTintList(getResources().getColorStateList(R.color.gray, getTheme()));
+                    appName.setTextColor(AppCompatResources.getColorStateList(StartMenuActivity.this, R.color.natural_white));
+                }
+
+                // Initialize listener for the application selector
+                createWhitelistAppClickListener(appContainer, appName);
             }
+        }
 
-            @Override
-            public void onFinish () {
+        // Listeners for whitelist confirmation or cancellation
+        createWhitelistConfirmationListener(dialog);
+        createWhitelistCancelListener(dialog);
+    }
+
+    // Create method for starting whitelist application list dialog confirmation listener
+    private void createWhitelistConfirmationListener (Dialog dialog) {
+        new Handler().post(() -> {
+
+            // Add whitelisted applications to SharedPreferences
+            dialog.findViewById(R.id.confirmImageButton).setOnClickListener(v -> {
+                sharedPreferencesEditor.putStringSet("allowedApplications", new HashSet<>(allowedApps)).apply();
                 dialog.dismiss();
-                sharedPreferencesEditor.putBoolean("isBlocking", false).apply();
-            }
-        }.start();
-
-        // Create OnClickListener for confirming the block
-        dialog.findViewById(R.id.confirmImageButton).setOnClickListener( v -> {
-            dialog.dismiss();
-            sharedPreferencesEditor.putBoolean("isBlocking", true).apply();
-            startService();
-        });
-
-        // Create OnClickListener for canceling the block
-        dialog.findViewById(R.id.cancelImageButton).setOnClickListener( v -> {
-            dialog.dismiss();
-            sharedPreferencesEditor.putBoolean("isBlocking", false).apply();
+            });
         });
     }
 
+    // Create method for starting whitelist application list dialog termination listener
+    private void createWhitelistCancelListener (Dialog dialog) {
+        new Handler().post(() -> {
+
+            // Remove selected items from temporary list
+            dialog.findViewById(R.id.cancelImageButton).setOnClickListener(v -> {
+                allowedApps.subList(0, allowedApps.size()).clear();
+                dialog.dismiss();
+            });
+        });
+    }
+
+    // Create method for creating LayoutParams
+    @NonNull
+    private ViewGroup.LayoutParams createLayoutParams(boolean relative, int width, int height, int alignMode, int marginLeft, int marginTop, int marginRight) {
+        if (relative) {
+            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, height);
+            layoutParams.setMargins(marginLeft, marginTop, marginRight, 20);
+            layoutParams.addRule(Gravity.CENTER_VERTICAL);
+            layoutParams.addRule(alignMode);
+            return layoutParams;
+        } else {
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(width, height);
+            layoutParams.setMargins(marginLeft, marginTop, marginRight, 20);
+            return layoutParams;
+        }
+    }
+
+    // Create method to generate OnClickListeners for whitelist apps in a list
+    private void createWhitelistAppClickListener(RelativeLayout relativeLayout, TextView textView) {
+        new Handler(Looper.getMainLooper()).post(() -> relativeLayout.setOnClickListener(v -> {
+            if (!allowedApps.contains(relativeLayout.getTag().toString())) {
+                allowedApps.add((String) relativeLayout.getTag());
+                relativeLayout.setBackgroundTintList(getResources().getColorStateList(R.color.gray, getTheme()));
+                textView.setTextColor(AppCompatResources.getColorStateList(StartMenuActivity.this, R.color.natural_white));
+            } else {
+                allowedApps.remove(relativeLayout.getTag().toString());
+                relativeLayout.setBackgroundTintList(getResources().getColorStateList(R.color.natural_white, getTheme()));
+                textView.setTextColor(AppCompatResources.getColorStateList(StartMenuActivity.this, R.color.black));
+            }
+        }));
+    }
+
+    // Create method to show confirmation dialog before the phone block starts
+    private void createConfirmationDialog(Dialog dialog, long goalTime) {
+
+        // Initialize variables requires for countdown
+        TextView timeLeftTextView = dialog.findViewById(R.id.timeTextView);
+        Handler mainThreadHandler = new Handler(Looper.getMainLooper());
+        Handler workerThreadHandler = new Handler();
+
+        // Show decrease in blocking time every second and close dialog if time runs out
+        workerThreadHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                long timeLeft = goalTime - System.currentTimeMillis();
+                int hours = (int) timeLeft / 3600000;
+                int minutes = (int) (timeLeft - hours * 3600000) / 60000;
+                int seconds = (int) (timeLeft - hours * 3600000 - minutes * 60000) / 1000;
+
+                String timeText = hours + "h " + minutes + "m " + seconds + "s";
+                mainThreadHandler.post(() -> timeLeftTextView.setText(timeText));
+
+                if (timeLeft > 0) {
+                    workerThreadHandler.postDelayed(this, 1000 - timeLeft + goalTime - System.currentTimeMillis());
+                } else {
+                    dialog.dismiss();
+                    workerThreadHandler.removeCallbacksAndMessages(null);
+                }
+            }
+        });
+
+        // Listen to user confirm or cancel
+        createBlockConfirmationListener(dialog, goalTime);
+        createBlockCancelListener(dialog);
+    }
+
+    // Create method for listening to block confirmation
+    private void createBlockConfirmationListener (Dialog dialog, long goalTime) {
+        dialog.findViewById(R.id.confirmImageButton).setOnClickListener(v -> {
+            dialog.dismiss();
+            sharedPreferencesEditor.putBoolean("usingWhitelistApplication", false).apply();
+            sharedPreferencesEditor.putLong("blockedUntil", goalTime).apply();
+            runPreliminaryChecks();
+        });
+    }
+
+    // Create method for listening to block cancellation
+    private void createBlockCancelListener (Dialog dialog) {
+        dialog.findViewById(R.id.cancelImageButton).setOnClickListener(v -> dialog.dismiss());
+    }
+
     // Create method to return the time requested in milliseconds with the Calendar utility
-    private long modifyCalendarInstance (Calendar calendar, int daysToAdd, int hourOfDay, int minuteOfHour) {
+    private long modifyCalendarInstance(Calendar calendar, int daysToAdd, int hourOfDay, int minuteOfHour) {
         calendar.add(Calendar.DATE, daysToAdd);
         calendar.add(Calendar.HOUR_OF_DAY, hourOfDay);
         calendar.add(Calendar.MINUTE, minuteOfHour);
@@ -173,32 +300,23 @@ public class StartMenuActivity extends AppCompatActivity {
     }
 
     // Create method to check if recorded time exists and is not after tomorrow
-    private void runPreliminaryChecks () {
-        if (sharedPreferences.getLong("blockedUntil", 0) <= modifyCalendarInstance(Calendar.getInstance(), 1, 23, 59) && sharedPreferences.getLong("blockedUntil", 0) > System.currentTimeMillis()) {
-            if (sharedPreferences.getBoolean("isBlocking", false)) {
-                if (mainContainer != null) {
-                    mainContainer.setVisibility(View.GONE);
-                    showLayoutThread.interrupt();
-                }
-                startService();
-            } else {
-                createConfirmationDialog();
-            }
-        } else {
-            if (!sharedPreferences.getBoolean("isBlocking", false)) {
-                Toast.makeText(getApplicationContext(), "Unable to start block. Please select a valid time.", Toast.LENGTH_SHORT).show();
+    private void runPreliminaryChecks() {
+        if (sharedPreferences.getLong("blockedUntil", 0) > System.currentTimeMillis()) {
+            startService();
+            if (mainContainer != null) {
+                mainContainer.setVisibility(View.GONE);
             }
         }
     }
 
     // Create method for launching the screen overlay service
-    private void startService () {
+    private void startService() {
 
         // Check for overlay permission and restart overlay screen service
         if (Settings.canDrawOverlays(this)) {
-            startSystemNavigationListener();
             stopService(new Intent(this, OverlayService.class));
             startForegroundService(new Intent(this, OverlayService.class));
+            sharedPreferencesEditor.putLong("timeRestarted", System.currentTimeMillis()).apply();
         }
 
         // Create a fullscreen interface
@@ -210,86 +328,14 @@ public class StartMenuActivity extends AppCompatActivity {
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 
-    // Create method to identify system navigation clicks and set default launcher apps
-    private void startSystemNavigationListener() {
-        systemNavigationTool = new SystemNavigationTool(this);
-        systemNavigationTool.setNavigationListener(new SystemNavigationListener() {
-
-            @Override
-            public void onHomePressed() {
-                homePressedTime = System.currentTimeMillis();
-                new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                    if (tasksPressedTime + 500 <= homePressedTime) {
-
-                        // Initialize objects for identifying most recent running app
-                        long currentTime = System.currentTimeMillis();
-                        Map<String, Long> appNameTimeMap = new HashMap<>();
-
-                        UsageStatsManager usageStatsManager = (UsageStatsManager) getSystemService(Context.USAGE_STATS_SERVICE);
-                        List<UsageStats> appList = usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, homePressedTime, currentTime);
-
-                        // Loop through list to identify apps visible since button click
-                        for (UsageStats app : appList) {
-                            if (!app.getPackageName().equals("com.pathfoss.savageblocker") && app.getLastTimeUsed() >= homePressedTime) {
-                                appNameTimeMap.put(app.getPackageName(), app.getLastTimeUsed());
-                            }
-                        }
-
-                        // Sort app list by latest time visible
-                        List<Map.Entry<String, Long>> list = new ArrayList<>(appNameTimeMap.entrySet());
-                        list.sort(Map.Entry.comparingByValue());
-
-                        // Set first visible app as default since button click
-                        if (list.size() > 0) {
-                            sharedPreferencesEditor.putString("defaultHome", list.get(list.size() - 1).getKey()).apply();
-                        }
-                    }
-                }, 1000);
-            }
-
-            @Override
-            public void onRecentAppsPressed() {
-                tasksPressedTime = System.currentTimeMillis();
-                new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                    if (homePressedTime + 500 <= tasksPressedTime) {
-
-                        // Initialize objects for identifying most recent running app
-                        long currentTime = System.currentTimeMillis();
-                        Map<String, Long> appNameTimeMap = new HashMap<>();
-
-                        UsageStatsManager usageStatsManager = (UsageStatsManager) getSystemService(Context.USAGE_STATS_SERVICE);
-                        List<UsageStats> appList = usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, tasksPressedTime, currentTime);
-
-                        // Loop through list to identify apps visible since button click
-                        for (UsageStats app : appList) {
-                            if (!app.getPackageName().equals("com.pathfoss.savageblocker") && app.getLastTimeUsed() >= tasksPressedTime) {
-                                appNameTimeMap.put(app.getPackageName(), app.getLastTimeUsed());
-                            }
-                        }
-
-                        // Sort app list by latest time visible
-                        List<Map.Entry<String, Long>> list = new ArrayList<>(appNameTimeMap.entrySet());
-                        list.sort(Map.Entry.comparingByValue());
-
-                        // Set first visible app as default since button click
-                        if (list.size() > 0) {
-                            sharedPreferencesEditor.putString("defaultTaskManager", list.get(list.size() - 1).getKey()).apply();
-                        }
-                    }
-                }, 1000);
-            }
-        });
-        systemNavigationTool.startNavigationListener();
-    }
-
     // Create method for creating a dialog to enable "Display over other apps" permission
-    private void checkOverlayPermission (){
+    private void checkOverlayPermission() {
 
         // Check if app can draw overlays and create OnClickListener for "Open Settings" link
         if (!Settings.canDrawOverlays(this)) {
             Dialog dialog = createDialog(R.layout.screen_overlay_permission_dialog);
 
-            dialog.findViewById(R.id.linkTextView).setOnClickListener( v -> {
+            dialog.findViewById(R.id.linkTextView).setOnClickListener(v -> {
                 Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                 startActivity(intent);
@@ -299,13 +345,13 @@ public class StartMenuActivity extends AppCompatActivity {
     }
 
     // Create method for creating a dialog to enable "Permit usage access" permission
-    private void checkUsagePermission (){
+    private void checkUsagePermission() {
 
         // Check if app permits usage access and create OnClickListener for "Open Settings" link
         if (!isAccessGranted()) {
             Dialog dialog = createDialog(R.layout.usage_access_permission_dialog);
 
-            dialog.findViewById(R.id.linkTextView).setOnClickListener( v -> {
+            dialog.findViewById(R.id.linkTextView).setOnClickListener(v -> {
                 Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                 startActivity(intent);
@@ -315,7 +361,7 @@ public class StartMenuActivity extends AppCompatActivity {
     }
 
     // Create boolean method for checking if the "Permit usage access" permission is granted
-    private boolean isAccessGranted () {
+    private boolean isAccessGranted() {
         try {
             ApplicationInfo applicationInfo = getPackageManager().getApplicationInfo(getPackageName(), 0);
             AppOpsManager appOpsManager = (AppOpsManager) getSystemService(APP_OPS_SERVICE);
@@ -325,12 +371,24 @@ public class StartMenuActivity extends AppCompatActivity {
         }
     }
 
-    // Create onDestroy method to stop any vital tasks when app is closed
+    // Check for user exit signals
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (systemNavigationTool != null) {
-            systemNavigationTool.stopNavigationListener();
-        }
+    protected void onUserLeaveHint() {
+        super.onUserLeaveHint();
+        sharedPreferencesEditor.putLong("timeUserLeft", System.currentTimeMillis()).apply();
+    }
+
+    // Check for user exit signals
+    @Override
+    protected void onStop() {
+        super.onStop();
+        sharedPreferencesEditor.putLong("timeUserLeft", System.currentTimeMillis()).apply();
+    }
+
+    // Check for user exit signals
+    @Override
+    protected void onPause() {
+        super.onPause();
+        sharedPreferencesEditor.putLong("timeUserLeft", System.currentTimeMillis()).apply();
     }
 }
