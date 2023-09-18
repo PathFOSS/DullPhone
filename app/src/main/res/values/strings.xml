@@ -2,10 +2,10 @@
     <string name="overlay"><u>Click to enable Draw Overlays</u>.</string>
     <string name="usage"><u>Click to enable Permit Usage</u>.</string>
     <string name="disclaimerTitle">Disclaimer</string>
-    <string name="disclaimerPointOne">1. It is impossible to use non-whitelisted applications while blocking your device with Savage Blocker. The app has not been officially tested on wearable or tablet devices and may contain bugs in general.</string>
+    <string name="disclaimerPointOne">1. It is impossible to use non-whitelisted applications while blocking your device with Dull Phone. The app has not been officially tested on wearable or tablet devices and may contain bugs in general.</string>
     <string name="disclaimerPointTwo">2. If the block timer has not finished, the only way to unblock your device is by enabling tap to unlock and clicking the screen a certain number of times.</string>
     <string name="disclaimerPointThree">3. The app requires the \'Can Draw Overlays\' and \'Permit Usage Access\' permissions for the block overlay to function. The usage data will only be used by the app locally when the block is turned on. The app has zero analytics or telemetry.</string>
-    <string name="disclaimerPointFour">4. Savage Blocker falls under the GPLv3 license. No liability caused by the misuse or malfunctioning of the Savage Blocker application shall be placed on the developer. </string>
+    <string name="disclaimerPointFour">4. Dull Phone falls under the GPLv3 license. No liability caused by the misuse or malfunctioning of the Dull Phone application shall be placed on the developer. </string>
     <string name="disclaimerButton">I Accept These Risks</string>
     <string name="timerColon">:</string>
     <string name="confirmationPopupTitle">Block Phone For</string>
@@ -20,7 +20,7 @@
     <string name="hoursToolTip">Hours</string>
     <string name="minutesToolTip">Minutes</string>
     <string name="secondsToolTip">Seconds</string>
-    <string name="blockerImageDescription">Savage Blocker skull</string>
+    <string name="blockerImageDescription">Dull Phone skull</string>
     <string name="startMenuTitle">Remove distractions</string>
     <string name="confirmButtonText">Block Device</string>
     <string name="tapCounterHelper">Taps left to unblock: 2500</string>

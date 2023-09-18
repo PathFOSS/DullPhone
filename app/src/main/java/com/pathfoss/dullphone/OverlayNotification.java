@@ -1,12 +1,12 @@
-package com.pathfoss.savageblocker;
+package com.pathfoss.dullphone;
 
 import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 
 public class OverlayNotification extends Application {
-    public static final String CHANNEL_ID = "SavageBlocker";
-    public static final String CHANNEL_NAME = "SavageBlocker";
+    public static final String CHANNEL_ID = "DullPhone";
+    public static final String CHANNEL_NAME = "DullPhone";
 
     // Create a new notification channel
     @Override

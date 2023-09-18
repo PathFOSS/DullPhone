@@ -1,4 +1,4 @@
-package com.pathfoss.savageblocker;
+package com.pathfoss.dullphone;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -41,9 +41,9 @@ public class OverlayService extends Service {
         (new OverlayScreen(this)).createOverlay();
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         assert notificationManager != null;
-        notificationManager.createNotificationChannel(new NotificationChannel("Savage Blocker", "Background Service", NotificationManager.IMPORTANCE_HIGH));
+        notificationManager.createNotificationChannel(new NotificationChannel("Dull Phone", "Background Service", NotificationManager.IMPORTANCE_HIGH));
 
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, "Savage Blocker");
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, "Dull Phone");
         Notification notification = notificationBuilder.setOngoing(true)
                 .setContentTitle("Device screen is blocked")
                 .setContentText("Only whitelisted apps allowed")

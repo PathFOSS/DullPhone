@@ -28,20 +28,20 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="Savage Blocker"
+        android:label="Dull Phone"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.SavageBlocker"
-        android:name="com.pathfoss.savageblocker.OverlayNotification">
+        android:theme="@style/Theme.DullPhone"
+        android:name="com.pathfoss.dullphone.OverlayNotification">
 
         <!-- Enable overlay service -->
         <service
-            android:name="com.pathfoss.savageblocker.OverlayService"
+            android:name="com.pathfoss.dullphone.OverlayService"
             android:enabled="true"
             android:stopWithTask="false"/>
 
         <!-- Set parameters for main activity -->
-        <activity android:name="com.pathfoss.savageblocker.StartMenuActivity"
+        <activity android:name="com.pathfoss.dullphone.StartMenuActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity">
@@ -52,7 +52,7 @@
         </activity>
 
         <!-- Create ability to restart application when phone is restarted -->
-        <receiver android:enabled="true" android:name="com.pathfoss.savageblocker.BootUpReceiver"
+        <receiver android:enabled="true" android:name="com.pathfoss.dullphone.BootUpReceiver"
             android:permission="android.permission.RECEIVE_BOOT_COMPLETED"
             android:exported="false">
             <intent-filter android:priority="1000">

@@ -1,4 +1,4 @@
-package com.pathfoss.savageblocker;
+package com.pathfoss.dullphone;
 
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;

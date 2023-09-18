@@ -1,4 +1,4 @@
-package com.pathfoss.savageblocker;
+package com.pathfoss.dullphone;
 
 import android.content.Context;
 
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("com.pathfoss.savageblocker", appContext.getPackageName());
+        assertEquals("com.pathfoss.dullphone", appContext.getPackageName());
     }
 }

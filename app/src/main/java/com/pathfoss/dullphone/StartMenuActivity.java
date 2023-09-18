@@ -1,4 +1,4 @@
-package com.pathfoss.savageblocker;
+package com.pathfoss.dullphone;
 
 import android.app.AppOpsManager;
 import android.app.Dialog;
@@ -43,7 +43,7 @@ public class StartMenuActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // Initialize global items
-        sharedPreferences = getSharedPreferences("SavageBlocker", MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences("DullPhone", MODE_PRIVATE);
         sharedPreferencesEditor = sharedPreferences.edit();
         packageManager = getPackageManager();
 
@@ -145,7 +145,7 @@ public class StartMenuActivity extends AppCompatActivity {
             String packageName = resolveInfo.activityInfo.packageName;
 
             if (!packageName.equals(sharedPreferences.getString("defaultDialer", "com.android.dialer"))
-                    && !packageName.equals("com.pathfoss.savageblocker")
+                    && !packageName.equals("com.pathfoss.dullphone")
                     && !packageName.equals("com.android.settings")) {
 
                 // Initialize layout elements

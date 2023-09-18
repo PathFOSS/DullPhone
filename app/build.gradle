@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace 'com.pathfoss.savageblocker'
+    namespace 'com.pathfoss.dullphone'
     compileSdk 34
 
     defaultConfig {
-        applicationId 'com.pathfoss.savageblocker'
+        applicationId 'com.pathfoss.dullphone'
         minSdk 26
         targetSdk 34
         versionCode 2

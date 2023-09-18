@@ -93,7 +93,7 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/confirmBlockButton"
-        android:theme="@style/SavageBlockerButtonStyle"
+        android:theme="@style/DullPhoneButtonStyle"
         android:layout_width="0dp"
         android:layout_height="60dp"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -1,6 +1,6 @@
 # A merciless phone blocker for Android
 
-Savage Blocker is the self-control block timer that every digital native desperately needs to stop the mindless checking and scrolling on the phone.
+Dull Phone is the self-control block timer that every digital native desperately needs to stop the mindless checking and scrolling on the phone.
 
 The application is completely Free and Open Source (FOSS) and falls under the GPLv3 license.
 
@@ -68,7 +68,7 @@ Solution: Most times requesting the whitelist app to open again should fix this.
 
 User=friendly method: You can enable tap to unlock mode and tap the screen 5000 times which takes on average 15 minutes of quick tapping.
 
-Advanced method: You need to have Developer Options and USB debugging enabled while plugged into the computer. Then run this terminal command: adb shell am force-stop com.pathfoss.savageblocker.
+Advanced method: You need to have Developer Options and USB debugging enabled while plugged into the computer. Then run this terminal command: adb shell am force-stop com.pathfoss.dullphone.
 
 ## How to have zero chance of exiting the block early?
 
@@ -78,7 +78,7 @@ Advanced method: You need to have Developer Options and USB debugging enabled wh
 
 ## Specifications
 
-Name: Savage Blocker
+Name: Dull Phone
 
 Newest version: 2.0.1
 

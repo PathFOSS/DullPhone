@@ -1,4 +1,4 @@
-package com.pathfoss.savageblocker;
+package com.pathfoss.dullphone;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -12,7 +12,7 @@ public class BootUpReceiver extends BroadcastReceiver {
         // Start overlay as a new intent if phone is booted and the block is unfinished
         if(Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
 
-            if (context.getSharedPreferences("SavageBlocker", Context.MODE_PRIVATE).getLong("blockedUntil",0) > System.currentTimeMillis()) {
+            if (context.getSharedPreferences("DullPhone", Context.MODE_PRIVATE).getLong("blockedUntil",0) > System.currentTimeMillis()) {
                 Intent activityIntent = new Intent(context, StartMenuActivity.class);
                 activityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(activityIntent);

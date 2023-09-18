@@ -1,5 +1,5 @@
 <resources>
-    <style name="Theme.SavageBlocker" parent="Theme.Material3.Dark.NoActionBar">
+    <style name="Theme.DullPhone" parent="Theme.Material3.Dark.NoActionBar">
 
         <!-- Primary brand color -->
         <item name="colorPrimary">@color/natural_white</item>
@@ -16,7 +16,7 @@
 
     </style>
 
-    <style name="SavageBlockerButtonStyle" parent="android:Widget.Material.Button.Colored">
+    <style name="DullPhoneButtonStyle" parent="android:Widget.Material.Button.Colored">
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/black</item>
     </style>

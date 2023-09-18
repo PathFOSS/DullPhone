@@ -1,4 +1,4 @@
-package com.pathfoss.savageblocker;
+package com.pathfoss.dullphone;
 
 import android.annotation.SuppressLint;
 import android.app.usage.UsageEvents;
@@ -65,7 +65,7 @@ public class OverlayScreen {
         packageManager = context.getPackageManager();
 
         // Initialize SharedPreferences
-        sharedPreferences = context.getSharedPreferences("SavageBlocker", Context.MODE_PRIVATE);
+        sharedPreferences = context.getSharedPreferences("DullPhone", Context.MODE_PRIVATE);
         sharedPreferencesEditor = sharedPreferences.edit();
         timeRemaining = sharedPreferences.getLong("blockedUntil", 0) - System.currentTimeMillis();
 
