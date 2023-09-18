@@ -8,24 +8,37 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import androidx.core.app.NotificationCompat;
+import java.util.Objects;
 
 public class OverlayService extends Service {
+    
+    public static final String ACTION_START_FOREGROUND_SERVICE = "ACTION_START_FOREGROUND_SERVICE";
+    public static final String ACTION_STOP_FOREGROUND_SERVICE = "ACTION_STOP_FOREGROUND_SERVICE";
 
     @Override
     public IBinder onBind(Intent intent) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
-    // Initialize overlay from the OverlayScreen class
     @Override
-    public void onCreate() {
-        super.onCreate();
-        (new OverlayScreen(this)).createOverlay();
-        launchOverlayAsForeground();
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent != null) {
+            switch (Objects.requireNonNull(intent.getAction())) {
+                case ACTION_START_FOREGROUND_SERVICE:
+
+                    startForegroundService();
+                    break;
+                case ACTION_STOP_FOREGROUND_SERVICE:
+                    stopForegroundService();
+                    break;
+            }
+        }
+        return START_STICKY;
     }
 
     // Create notification channel
-    private void launchOverlayAsForeground() {
+    private void startForegroundService() {
+        (new OverlayScreen(this)).createOverlay();
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         assert notificationManager != null;
         notificationManager.createNotificationChannel(new NotificationChannel("Savage Blocker", "Background Service", NotificationManager.IMPORTANCE_HIGH));
@@ -33,11 +46,17 @@ public class OverlayService extends Service {
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, "Savage Blocker");
         Notification notification = notificationBuilder.setOngoing(true)
                 .setContentTitle("Device screen is blocked")
-                .setContentText("You are unable to use other apps")
+                .setContentText("Only whitelisted apps allowed")
                 .setSmallIcon(R.drawable.ic_stat_name)
                 .setPriority(NotificationManager.IMPORTANCE_MAX)
                 .setCategory(Notification.CATEGORY_SERVICE)
                 .build();
         startForeground(2, notification);
+    }
+
+    // Create a method to kill the service on request
+    private void stopForegroundService() {
+        stopForeground(true);
+        stopSelf();
     }
 }

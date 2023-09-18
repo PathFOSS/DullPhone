@@ -47,7 +47,7 @@ public class OverlayScreen {
     private final PackageManager packageManager;
     private final ImageButton appsImageButton, phoneImageButton;
     private final SystemNavigationTool systemNavigationTool;
-    private final Handler homeButtonHandler, foregroundMonitorHandler, mainThreadHandler, workerThreadHandler, progressHandler;
+    private final Handler homeButtonHandler, foregroundMonitorHandler, mainThreadHandler, workerThreadHandler;
     private boolean tapsEnabled = false;
     private boolean whitelistToggled = false;
     private long timeRemaining;
@@ -60,7 +60,6 @@ public class OverlayScreen {
         systemNavigationTool = new SystemNavigationTool(context);
         homeButtonHandler = new Handler(Looper.getMainLooper());
         mainThreadHandler = new Handler(Looper.getMainLooper());
-        progressHandler = new Handler(Looper.getMainLooper());
         foregroundMonitorHandler = new Handler();
         workerThreadHandler = new Handler();
         packageManager = context.getPackageManager();
@@ -199,7 +198,7 @@ public class OverlayScreen {
     }
 
     // Create method for adding views
-    private void addViewsToViews (@NonNull LinearLayout adder, View[] addable) {
+    private void addViewsToViews (@NonNull LinearLayout adder, @NonNull View[] addable) {
         for (View view : addable) {
             adder.addView(view);
         }
@@ -262,24 +261,16 @@ public class OverlayScreen {
                 int hours = (int) timeLeft / 3600000;
                 int minutes = (int) (timeLeft - hours * 3600000) / 60000;
                 int second = (int) (timeLeft - hours * 3600000 - minutes * 60000) / 1000;
+                int progress = Math.round(((float) (fixedTimeLeft - goalTime + System.currentTimeMillis()) / (float) fixedTimeLeft) * (10000));
 
                 mainThreadHandler.post(() -> {
                     hourText.setText(String.valueOf(hours));
                     minuteText.setText(String.valueOf(minutes));
                     secondText.setText(String.valueOf(second));
+                    progressBar.setProgress(progress);
                 });
 
                 workerThreadHandler.postDelayed(this, 1000 - timeLeft + goalTime - System.currentTimeMillis());
-            }
-        });
-
-        // Create timer to update the progress bar
-        progressHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                int progress = Math.round(((float) (fixedTimeLeft - goalTime + System.currentTimeMillis()) / (float) fixedTimeLeft) * (10000));
-                progressBar.setProgress(progress);
-                workerThreadHandler.postDelayed(this, 10);
             }
         });
     }
@@ -369,11 +360,13 @@ public class OverlayScreen {
         systemNavigationTool.stopNavigationListener();
         foregroundMonitorHandler.removeCallbacksAndMessages(null);
         homeButtonHandler.removeCallbacksAndMessages(null);
-        progressHandler.removeCallbacksAndMessages(null);
         mainThreadHandler.removeCallbacksAndMessages(null);
         workerThreadHandler.removeCallbacksAndMessages(null);
         sharedPreferencesEditor.putBoolean("usingWhitelistApplication", false).apply();
         removeOverlay();
+        Intent intent = new Intent(context, OverlayService.class);
+        intent.setAction(OverlayService.ACTION_STOP_FOREGROUND_SERVICE);
+        context.startService(intent);
         restartActivity();
     }
 

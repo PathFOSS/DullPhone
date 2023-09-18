@@ -107,6 +107,7 @@ public class StartMenuActivity extends AppCompatActivity {
     }
 
     // Create method to show and return dialogs
+    @NonNull
     private Dialog createDialog(int layoutFile) {
         Dialog dialog = new Dialog(this);
         dialog.setContentView(layoutFile);
@@ -143,7 +144,9 @@ public class StartMenuActivity extends AppCompatActivity {
             // Define package name
             String packageName = resolveInfo.activityInfo.packageName;
 
-            if (!packageName.equals("com.pathfoss.savageblocker") && !packageName.equals("com.android.settings")) {
+            if (!packageName.equals(sharedPreferences.getString("defaultDialer", "com.android.dialer"))
+                    && !packageName.equals("com.pathfoss.savageblocker")
+                    && !packageName.equals("com.android.settings")) {
 
                 // Initialize layout elements
                 RelativeLayout appContainer = new RelativeLayout(StartMenuActivity.this);
@@ -243,7 +246,7 @@ public class StartMenuActivity extends AppCompatActivity {
     }
 
     // Create method to show confirmation dialog before the phone block starts
-    private void createConfirmationDialog(Dialog dialog, long goalTime) {
+    private void createConfirmationDialog(@NonNull Dialog dialog, long goalTime) {
 
         // Initialize variables requires for countdown
         TextView timeLeftTextView = dialog.findViewById(R.id.timeTextView);
@@ -277,7 +280,7 @@ public class StartMenuActivity extends AppCompatActivity {
     }
 
     // Create method for listening to block confirmation
-    private void createBlockConfirmationListener (Dialog dialog, long goalTime) {
+    private void createBlockConfirmationListener (@NonNull Dialog dialog, long goalTime) {
         dialog.findViewById(R.id.confirmImageButton).setOnClickListener(v -> {
             dialog.dismiss();
             sharedPreferencesEditor.putBoolean("usingWhitelistApplication", false).apply();
@@ -287,12 +290,12 @@ public class StartMenuActivity extends AppCompatActivity {
     }
 
     // Create method for listening to block cancellation
-    private void createBlockCancelListener (Dialog dialog) {
+    private void createBlockCancelListener (@NonNull Dialog dialog) {
         dialog.findViewById(R.id.cancelImageButton).setOnClickListener(v -> dialog.dismiss());
     }
 
     // Create method to return the time requested in milliseconds with the Calendar utility
-    private long modifyCalendarInstance(Calendar calendar, int daysToAdd, int hourOfDay, int minuteOfHour) {
+    private long modifyCalendarInstance(@NonNull Calendar calendar, int daysToAdd, int hourOfDay, int minuteOfHour) {
         calendar.add(Calendar.DATE, daysToAdd);
         calendar.add(Calendar.HOUR_OF_DAY, hourOfDay);
         calendar.add(Calendar.MINUTE, minuteOfHour);
@@ -314,8 +317,9 @@ public class StartMenuActivity extends AppCompatActivity {
 
         // Check for overlay permission and restart overlay screen service
         if (Settings.canDrawOverlays(this)) {
-            stopService(new Intent(this, OverlayService.class));
-            startForegroundService(new Intent(this, OverlayService.class));
+            Intent intent = new Intent(this, OverlayService.class);
+            intent.setAction(OverlayService.ACTION_START_FOREGROUND_SERVICE);
+            startForegroundService(intent);
             sharedPreferencesEditor.putLong("timeRestarted", System.currentTimeMillis()).apply();
         }
 
