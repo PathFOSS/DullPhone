@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import androidx.core.app.NotificationCompat;
-import java.util.Objects;
 
 public class OverlayService extends Service {
     
@@ -22,10 +21,9 @@ public class OverlayService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent != null) {
-            switch (Objects.requireNonNull(intent.getAction())) {
+        if (intent != null && intent.getAction() != null) {
+            switch (intent.getAction()) {
                 case ACTION_START_FOREGROUND_SERVICE:
-
                     startForegroundService();
                     break;
                 case ACTION_STOP_FOREGROUND_SERVICE:
