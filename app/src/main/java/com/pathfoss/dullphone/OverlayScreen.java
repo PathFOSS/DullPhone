@@ -363,6 +363,7 @@ public class OverlayScreen {
         mainThreadHandler.removeCallbacksAndMessages(null);
         workerThreadHandler.removeCallbacksAndMessages(null);
         sharedPreferencesEditor.putBoolean("usingWhitelistApplication", false).apply();
+        sharedPreferencesEditor.putLong("blockedUntil", 0).apply();
         removeOverlay();
         Intent intent = new Intent(context, OverlayService.class);
         intent.setAction(OverlayService.ACTION_STOP_FOREGROUND_SERVICE);
