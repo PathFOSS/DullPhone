@@ -33,6 +33,7 @@ public class StartMenuActivity extends AppCompatActivity {
 
     // Create global objects and variables
     private final ArrayList<String> allowedApps = new ArrayList<>();
+    private final Handler workerThreadHandler = new Handler();
     private PackageManager packageManager;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor sharedPreferencesEditor;
@@ -251,17 +252,17 @@ public class StartMenuActivity extends AppCompatActivity {
         // Initialize variables requires for countdown
         TextView timeLeftTextView = dialog.findViewById(R.id.timeTextView);
         Handler mainThreadHandler = new Handler(Looper.getMainLooper());
-        Handler workerThreadHandler = new Handler();
 
         // Show decrease in blocking time every second and close dialog if time runs out
         workerThreadHandler.post(new Runnable() {
             @Override
             public void run() {
                 long timeLeft = goalTime - System.currentTimeMillis();
-                int hours = (int) timeLeft / 3600000;
+                int hours = (int) (timeLeft / 3600000);
                 int minutes = (int) (timeLeft - hours * 3600000) / 60000;
                 int seconds = (int) (timeLeft - hours * 3600000 - minutes * 60000) / 1000;
 
+                System.out.println(timeLeft);
                 String timeText = hours + "h " + minutes + "m " + seconds + "s";
                 mainThreadHandler.post(() -> timeLeftTextView.setText(timeText));
 
@@ -285,13 +286,17 @@ public class StartMenuActivity extends AppCompatActivity {
             dialog.dismiss();
             sharedPreferencesEditor.putBoolean("usingWhitelistApplication", false).apply();
             sharedPreferencesEditor.putLong("blockedUntil", goalTime).apply();
+            workerThreadHandler.removeCallbacksAndMessages(null);
             runPreliminaryChecks();
         });
     }
 
     // Create method for listening to block cancellation
     private void createBlockCancelListener (@NonNull Dialog dialog) {
-        dialog.findViewById(R.id.cancelImageButton).setOnClickListener(v -> dialog.dismiss());
+        dialog.findViewById(R.id.cancelImageButton).setOnClickListener(v -> {
+            workerThreadHandler.removeCallbacksAndMessages(null);
+            dialog.dismiss();
+        });
     }
 
     // Create method to return the time requested in milliseconds with the Calendar utility

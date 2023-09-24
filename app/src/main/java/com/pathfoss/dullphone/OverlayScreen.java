@@ -258,15 +258,15 @@ public class OverlayScreen {
             public void run() {
 
                 long timeLeft = goalTime - System.currentTimeMillis();
-                int hours = (int) timeLeft / 3600000;
+                int hours = (int) (timeLeft / 3600000);
                 int minutes = (int) (timeLeft - hours * 3600000) / 60000;
-                int second = (int) (timeLeft - hours * 3600000 - minutes * 60000) / 1000;
+                int seconds = (int) (timeLeft - hours * 3600000 - minutes * 60000) / 1000;
                 int progress = Math.round(((float) (fixedTimeLeft - goalTime + System.currentTimeMillis()) / (float) fixedTimeLeft) * (10000));
 
                 mainThreadHandler.post(() -> {
                     hourText.setText(String.valueOf(hours));
                     minuteText.setText(String.valueOf(minutes));
-                    secondText.setText(String.valueOf(second));
+                    secondText.setText(String.valueOf(seconds));
                     progressBar.setProgress(progress);
                 });
 
