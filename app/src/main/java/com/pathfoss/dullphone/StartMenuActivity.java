@@ -27,7 +27,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class StartMenuActivity extends AppCompatActivity {
 
@@ -139,11 +142,21 @@ public class StartMenuActivity extends AppCompatActivity {
         List<ResolveInfo> appList = packageManager.queryIntentActivities(intent, 0);
         LinearLayout whitelistLinearLayout = dialog.findViewById(R.id.whitelistLinearLayout);
 
-        // Create layout for each enabled app
+        // Sort apps in alphabetical order
+        SortedMap<String, String> sortedAppList = new TreeMap<>();
         for (ResolveInfo resolveInfo : appList) {
+            try {
+                String packageName = resolveInfo.activityInfo.packageName;
+                sortedAppList.put((String) packageManager.getApplicationLabel(packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA)), packageName);
+            } catch (Exception ignored){}
+        }
 
-            // Define package name
-            String packageName = resolveInfo.activityInfo.packageName;
+        // Create layout for each enabled app
+        for (Map.Entry<String, String> stringStringEntry : sortedAppList.entrySet()) {
+
+            // Define app and package name
+            String appName = (String) stringStringEntry.getKey();
+            String packageName = (String) stringStringEntry.getValue();
 
             if (!packageName.equals(sharedPreferences.getString("defaultDialer", "com.android.dialer"))
                     && !packageName.equals("com.pathfoss.dullphone")
@@ -152,37 +165,37 @@ public class StartMenuActivity extends AppCompatActivity {
                 // Initialize layout elements
                 RelativeLayout appContainer = new RelativeLayout(StartMenuActivity.this);
                 ImageView appIcon = new ImageView(StartMenuActivity.this);
-                TextView appName = new TextView(StartMenuActivity.this);
+                TextView appTitle = new TextView(StartMenuActivity.this);
 
                 // Stylize app containers with identifiers
                 try {
                     appContainer.setBackground(AppCompatResources.getDrawable(StartMenuActivity.this, R.drawable.button_background));
                     appContainer.setTag(packageName);
                     appIcon.setBackground(packageManager.getApplicationIcon(packageName));
-                    appName.setTextSize(20);
-                    appName.setTextColor(getResources().getColor(R.color.black, getTheme()));
-                    appName.setText((String) packageManager.getApplicationLabel(packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA)));
+                    appTitle.setTextSize(20);
+                    appTitle.setTextColor(getResources().getColor(R.color.black, getTheme()));
+                    appTitle.setText(appName);
                 } catch (Exception ignored) {}
 
                 // Add icons and names in containers
-                appContainer.addView(appName);
+                appContainer.addView(appTitle);
                 appContainer.addView(appIcon);
                 whitelistLinearLayout.addView(appContainer);
 
                 // Set layout parameters for layouts
                 appContainer.setLayoutParams(createLayoutParams(false, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 0, 0, 0, 0));
                 appIcon.setLayoutParams(createLayoutParams(true, 100, 100, RelativeLayout.ALIGN_PARENT_LEFT, 20, 20, 20));
-                appName.setLayoutParams(createLayoutParams(true, RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.ALIGN_PARENT_RIGHT, 20, 20, 20));
+                appTitle.setLayoutParams(createLayoutParams(true, RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.ALIGN_PARENT_RIGHT, 20, 20, 20));
 
                 // Highlight old whitelist applications
                 if (sharedPreferences.getStringSet("allowedApplications", new HashSet<>()).contains(packageName)) {
                     allowedApps.add((String) packageName);
                     appContainer.setBackgroundTintList(getResources().getColorStateList(R.color.gray, getTheme()));
-                    appName.setTextColor(AppCompatResources.getColorStateList(StartMenuActivity.this, R.color.natural_white));
+                    appTitle.setTextColor(AppCompatResources.getColorStateList(StartMenuActivity.this, R.color.natural_white));
                 }
 
                 // Initialize listener for the application selector
-                createWhitelistAppClickListener(appContainer, appName);
+                createWhitelistAppClickListener(appContainer, appTitle);
             }
         }
 

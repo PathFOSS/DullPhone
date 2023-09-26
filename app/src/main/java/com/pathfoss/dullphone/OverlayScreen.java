@@ -28,7 +28,10 @@ import androidx.appcompat.content.res.AppCompatResources;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class OverlayScreen {
 
@@ -168,33 +171,47 @@ public class OverlayScreen {
 
     // Create method to draw whitelist apps on screen
     private void createWhitelistLayout () {
+
+        // Order whitelist apps alphabetically
+        SortedMap<String, String> sortedAppList = new TreeMap<>();
         for (String packageName : sharedPreferences.getStringSet("allowedApplications", new HashSet<>())) {
-            new Handler(Looper.getMainLooper()).post(() -> {
+            try {
+                sortedAppList.put((String) packageManager.getApplicationLabel(packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA)), packageName);
+            } catch (Exception ignored){}
+        }
+
+        // Create a clickable layout for each app
+        new Handler(Looper.getMainLooper()).post(() -> {
+            for (Map.Entry<String, String> stringStringEntry : sortedAppList.entrySet()) {
+
+                // Define app and package name
+                String appName = (String) stringStringEntry.getKey();
+                String packageName = (String) stringStringEntry.getValue();
 
                 // Initialize Views
                 LinearLayout linearLayout = new LinearLayout(context);
                 ImageView appIcon = new ImageView(context);
-                TextView appName = new TextView(context);
+                TextView appTitle = new TextView(context);
 
                 // Set style and handle PackageManager exceptions
                 try {
                     appIcon.setBackground(packageManager.getApplicationIcon(packageName));
-                    appName.setText(packageManager.getApplicationLabel(packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA)));
-                    appName.setTextSize(20);
-                    appName.setTextColor(context.getResources().getColor(R.color.natural_white, context.getTheme()));
+                    appTitle.setText(appName);
+                    appTitle.setTextSize(20);
+                    appTitle.setTextColor(context.getResources().getColor(R.color.natural_white, context.getTheme()));
                 } catch (Exception ignored) {}
 
                 // Set layout parameters for each view
                 linearLayout.setLayoutParams(createLayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT, 0, 20));
                 appIcon.setLayoutParams(createLayoutParams(80, 80, 0, 0));
-                appName.setLayoutParams(createLayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, 80, 20, 0));
+                appTitle.setLayoutParams(createLayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, 80, 20, 0));
 
                 // Add views to create an app container and initialize listener
-                addViewsToViews(linearLayout, new View[]{appIcon, appName});
+                addViewsToViews(linearLayout, new View[]{appIcon, appTitle});
                 addViewsToViews(whitelistAppsLinearLayout, new View[]{linearLayout});
                 createWhitelistAppClickListener(linearLayout, packageName);
-            });
-        }
+            }
+        });
     }
 
     // Create method for adding views
