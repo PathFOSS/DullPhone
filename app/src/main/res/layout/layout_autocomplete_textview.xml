@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.textfield.TextInputLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/til"
+    style="@style/dullphone_dropdown"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/primary_button_width_normal">
+
+    <AutoCompleteTextView
+        android:id="@+id/act"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingVertical="0dp"
+        android:labelFor="@id/act"
+        android:inputType="none"/>
+
+</com.google.android.material.textfield.TextInputLayout>

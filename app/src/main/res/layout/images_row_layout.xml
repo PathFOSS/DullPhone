@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/image_size"
+    android:layout_marginBottom="@dimen/spacing_normal">
+
+    <ImageView
+        app:layout_constraintDimensionRatio="1:1"
+        android:id="@+id/iv_1"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:contentDescription="@string/ac_row_image_1"/>
+
+    <ImageView
+        app:layout_constraintDimensionRatio="1:1"
+        android:id="@+id/iv_2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/iv_1"
+        app:layout_constraintEnd_toStartOf="@+id/iv_3"
+        android:contentDescription="@string/ac_row_image_2"/>
+
+    <ImageView
+        app:layout_constraintDimensionRatio="1:1"
+        android:id="@+id/iv_3"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/iv_2"
+        app:layout_constraintEnd_toStartOf="@+id/iv_4"
+        android:contentDescription="@string/ac_row_image_3"/>
+
+    <ImageView
+        app:layout_constraintDimensionRatio="1:1"
+        android:id="@+id/iv_4"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/iv_3"
+        app:layout_constraintEnd_toStartOf="@+id/iv_5"
+        android:contentDescription="@string/ac_row_image_4"/>
+
+    <ImageView
+        app:layout_constraintDimensionRatio="1:1"
+        android:id="@+id/iv_5"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/iv_4"
+        app:layout_constraintEnd_toStartOf="@+id/iv_6"
+        android:contentDescription="@string/ac_row_image_5"/>
+
+    <ImageView
+        app:layout_constraintDimensionRatio="1:1"
+        android:id="@+id/iv_6"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:contentDescription="@string/ac_row_image_6"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

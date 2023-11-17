@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- General -->
+    <dimen name="image_size">30dp</dimen>
+    <dimen name="radius">21dp</dimen>
+
+    <!-- Views -->
+    <dimen name="time_block_width_normal">80dp</dimen>
+    <dimen name="slider_width">65dp</dimen>
+
+    <!-- Buttons -->
+    <dimen name="primary_button_width_normal">60dp</dimen>
+    <dimen name="secondary_button_width_normal">42dp</dimen>
+
+    <!-- Spacing -->
+    <dimen name="spacing_normal">20dp</dimen>
+    <dimen name="blocker_vertical_spacing_normal">50dp</dimen>
+
+    <!-- Text -->
+    <dimen name="font_size_time">30sp</dimen>
+    <dimen name="font_size_title_normal">21sp</dimen>
+    <dimen name="font_size_title_secondary">18sp</dimen>
+    <dimen name="font_size_text_normal">16sp</dimen>
+
+</resources>

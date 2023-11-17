@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+style="@style/dullphone_dialog_normal">
+
+<TextView
+    android:id="@+id/tv_title"
+    style="@style/dullphone_time_text"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintVertical_chainStyle="packed"
+    android:textSize="@dimen/font_size_title_normal"
+    android:text="@string/usageAccessOverlayPermissionTitle"/>
+
+<TextView
+    android:id="@+id/tv_paragraph"
+    style="@style/dullphone_text_normal"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    app:layout_constraintTop_toBottomOf="@id/tv_title"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    android:layout_marginTop="@dimen/blocker_vertical_spacing_normal"
+    android:text="@string/usageAccessOverlayPermissionText"/>
+
+<Button
+    android:id="@+id/b_cancel"
+    style="@style/dullphone_button"
+    android:layout_width="0dp"
+    android:layout_height="@dimen/secondary_button_width_normal"
+    app:layout_constraintTop_toBottomOf="@id/tv_paragraph"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toStartOf="@id/b_confirm"
+    android:layout_marginTop="@dimen/blocker_vertical_spacing_normal"
+    android:text="@string/at_close"/>
+
+<Button
+    android:id="@+id/b_confirm"
+    style="@style/dullphone_button"
+    android:layout_width="0dp"
+    android:layout_height="@dimen/secondary_button_width_normal"
+    app:layout_constraintTop_toBottomOf="@id/tv_paragraph"
+    app:layout_constraintStart_toEndOf="@id/b_cancel"
+    app:layout_constraintEnd_toEndOf="parent"
+    android:layout_marginTop="@dimen/blocker_vertical_spacing_normal"
+    android:layout_marginStart="@dimen/spacing_normal"
+    android:text="@string/at_settings"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

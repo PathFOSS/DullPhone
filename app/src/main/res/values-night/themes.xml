@@ -1,46 +1,112 @@
 <resources>
     <style name="Theme.DullPhone" parent="Theme.Material3.Dark.NoActionBar">
 
-        <!-- Primary brand color -->
         <item name="colorPrimary">@color/natural_white</item>
         <item name="colorPrimaryVariant">@color/black</item>
         <item name="colorOnPrimary">@color/black</item>
 
-        <!-- Secondary brand color -->
         <item name="colorSecondary">@color/natural_white</item>
         <item name="colorSecondaryVariant">@color/natural_white</item>
         <item name="colorOnSecondary">@color/natural_white</item>
 
-        <!-- Element styles -->
         <item name="android:statusBarColor">@color/black</item>
-
     </style>
 
-    <style name="DullPhoneButtonStyle" parent="android:Widget.Material.Button.Colored">
-        <item name="android:textStyle">bold</item>
+    <style name="dullphone_button" parent="">
         <item name="android:textColor">@color/black</item>
+        <item name="android:background">@drawable/button_background</item>
     </style>
 
-    <style name="RobotoTextViewStyle" parent="android:Widget.TextView">
+    <style name="dullphone_text_normal" parent="android:Widget.TextView">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:fontFamily">sans-serif-light</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/font_size_text_normal</item>
         <item name="android:lineSpacingMultiplier">1.618</item>
-        <item name="android:paddingBottom">28dp</item>
+        <item name="android:layout_marginBottom">@dimen/spacing_normal</item>
         <item name="android:textColor">@color/natural_white</item>
     </style>
 
-    <style name="TitleText" parent="android:Widget.TextView">
-        <item name="android:textSize">20sp</item>
-        <item name="android:textStyle">bold</item>
+    <style name="dullphone_fragment_normal">
+        <item name="android:padding">@dimen/spacing_normal</item>
+        <item name="android:background">@color/black</item>
+    </style>
+
+    <style name="dullphone_dialog_normal">
+        <item name="android:padding">@dimen/spacing_normal</item>
+        <item name="android:background">@drawable/background_dropdown</item>
+    </style>
+
+    <style name="dullphone_start_menu_title">
+        <item name="android:textSize">@dimen/font_size_title_normal</item>
+        <item name="android:textColor">@color/natural_white</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="dullphone_time_text">
+        <item name="android:textSize">@dimen/font_size_time</item>
+        <item name="android:textColor">@color/natural_white</item>
         <item name="android:gravity">center</item>
-        <item name="android:paddingBottom">28dp</item>
-        <item name="android:textColor">@color/natural_white</item>
     </style>
 
-    <style name="CircularDeterminateProgressBar">
+    <style name="dullphone_secondary_title">
+        <item name="android:textSize">@dimen/font_size_title_secondary</item>
+        <item name="android:textColor">@color/natural_white</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="dullphone_secondary_button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:clickable">false</item>
+        <item name="android:scaleX">0.7</item>
+        <item name="android:scaleY">0.7</item>
+    </style>
+
+    <style name="dullphone_application_item_text">
+        <item name="android:textSize">@dimen/font_size_text_normal</item>
+        <item name="android:textColor">@color/natural_white</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="dullphone_progress_bar">
         <item name="android:indeterminateOnly">false</item>
         <item name="android:progressDrawable">@drawable/progress_circle</item>
         <item name="android:max">10000</item>
     </style>
+
+    <style name="dullphone_dropdown" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+        <item name="android:layout_marginTop">@dimen/spacing_normal</item>
+        <item name="endIconTint">@color/natural_white</item>
+        <item name="boxStrokeColor">@color/natural_white</item>
+        <item name="boxStrokeWidth">2dp</item>
+        <item name="hintTextColor">@color/natural_white</item>
+        <item name="android:textColorHint">@color/natural_white</item>
+        <item name="android:textColorHighlight">@color/natural_white</item>
+        <item name="boxCornerRadiusTopStart">@dimen/radius</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/radius</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/radius</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/radius</item>
+        <item name="errorEnabled">false</item>
+        <item name="android:padding">0dp</item>
+    </style>
+
+    <style name="dullphone_autocomplete_text_view">
+        <item name="android:background">@color/black</item>
+        <item name="android:textColor">@color/natural_white</item>
+        <item name="android:textSize">@dimen/font_size_text_normal</item>
+        <item name="android:paddingVertical">10dp</item>
+    </style>
+
+    <style name="dullphone_slider">
+        <item name="trackHeight">16dp</item>
+        <item name="thumbRadius">14dp</item>
+        <item name="haloColor">@color/transparent</item>
+        <item name="thumbColor">@color/natural_white</item>
+        <item name="trackColorActive">@color/natural_white</item>
+        <item name="trackColorInactive">@color/gray</item>
+        <item name="tickVisible">false</item>
+        <item name="labelBehavior">gone</item>
+        <item name="android:stepSize">1</item>
+    </style>
+
 </resources>

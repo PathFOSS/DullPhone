@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    style="@style/dullphone_fragment_normal">
+
+    <TextView
+        android:id="@+id/tv_title"
+        style="@style/dullphone_start_menu_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="@string/disclaimerTitle"/>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/ncv"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_title"
+        app:layout_constraintBottom_toTopOf="@id/b_accept"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginVertical="@dimen/spacing_normal">
+
+        <LinearLayout
+            android:id="@+id/ll"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_paragraph1"
+                style="@style/dullphone_text_normal"
+                android:text="@string/disclaimerPointOne"/>
+
+            <TextView
+                android:id="@+id/tv_paragraph2"
+                style="@style/dullphone_text_normal"
+                android:text="@string/disclaimerPointTwo"/>
+
+            <TextView
+                android:id="@+id/tv_paragraph3"
+                style="@style/dullphone_text_normal"
+                android:text="@string/disclaimerPointThree"/>
+
+            <TextView
+                android:id="@+id/tv_paragraph4"
+                style="@style/dullphone_text_normal"
+                android:text="@string/disclaimerPointFour"/>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <Button
+        android:id="@+id/b_accept"
+        style="@style/dullphone_button"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/secondary_button_width_normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="@string/disclaimerButton"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

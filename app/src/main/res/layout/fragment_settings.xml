@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    style="@style/dullphone_fragment_normal">
+
+    <LinearLayout
+        android:id="@+id/ll_back"
+        android:layout_width="@dimen/secondary_button_width_normal"
+        android:layout_height="@dimen/secondary_button_width_normal"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageButton
+            android:id="@+id/ib_back"
+            style="@style/dullphone_secondary_button"
+            android:background="@drawable/icon_arrow_back"
+            android:contentDescription="@string/ac_arrow_back"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_title"
+        style="@style/dullphone_start_menu_title"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="@id/ll_back"
+        app:layout_constraintBottom_toBottomOf="@id/ll_back"
+        app:layout_constraintStart_toEndOf="@id/ll_back"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="@dimen/spacing_normal"
+        android:text="@string/at_settings"/>
+
+    <include android:id="@+id/til_taps"
+        layout="@layout/layout_autocomplete_textview"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/primary_button_width_normal"
+        app:layout_constraintTop_toBottomOf="@id/tv_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/spacing_normal"/>
+
+    <TextView
+        android:id="@+id/tv_title_vibration"
+        style="@style/dullphone_secondary_title"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="@id/s_vibration"
+        app:layout_constraintBottom_toBottomOf="@id/s_vibration"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/s_vibration"
+        android:layout_marginEnd="@dimen/spacing_normal"
+        android:text="@string/at_tap_vibration"/>
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/s_vibration"
+        style="@style/dullphone_slider"
+        android:layout_width="@dimen/slider_width"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/til_taps"
+        app:layout_constraintStart_toEndOf="@id/tv_title_vibration"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/spacing_normal"
+        android:contentDescription="@string/ac_vibration_toggle"/>
+
+    <TextView
+        android:id="@+id/tv_title_whitelist"
+        style="@style/dullphone_secondary_title"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="@id/s_whitelist"
+        app:layout_constraintBottom_toBottomOf="@id/s_whitelist"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/s_whitelist"
+        android:layout_marginEnd="@dimen/spacing_normal"
+        android:text="@string/at_whitelist"/>
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/s_whitelist"
+        style="@style/dullphone_slider"
+        android:layout_width="@dimen/slider_width"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/tv_title_vibration"
+        app:layout_constraintStart_toEndOf="@id/tv_title_whitelist"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/spacing_normal"
+        android:contentDescription="@string/ac_whitelist_toggle"/>
+
+    <TextView
+        android:id="@+id/tv_title_icon"
+        style="@style/dullphone_secondary_title"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/primary_button_width_normal"
+        app:layout_constraintTop_toBottomOf="@id/tv_title_whitelist"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/iv_dullphone"
+        android:layout_marginEnd="@dimen/spacing_normal"
+        android:layout_marginTop="@dimen/spacing_normal"
+        android:text="@string/at_icon"/>
+
+    <ImageView
+        android:id="@+id/iv_dullphone"
+        android:layout_width="@dimen/primary_button_width_normal"
+        android:layout_height="@dimen/primary_button_width_normal"
+        app:layout_constraintTop_toBottomOf="@id/tv_title_whitelist"
+        app:layout_constraintEnd_toStartOf="@id/iv_skull"
+        android:layout_marginEnd="@dimen/spacing_normal"
+        android:layout_marginTop="@dimen/spacing_normal"
+        android:paddingVertical="10dp"
+        android:background="@drawable/icon_dullphone_selected"
+        android:contentDescription="@string/ac_dullphone_icon"/>
+
+    <ImageView
+        android:id="@+id/iv_skull"
+        android:layout_width="@dimen/primary_button_width_normal"
+        android:layout_height="@dimen/primary_button_width_normal"
+        app:layout_constraintTop_toBottomOf="@id/tv_title_whitelist"
+        app:layout_constraintEnd_toStartOf="@id/iv_fire"
+        android:layout_marginTop="@dimen/spacing_normal"
+        android:layout_marginEnd="@dimen/spacing_normal"
+        android:paddingVertical="10dp"
+        android:background="@drawable/icon_skull_small"
+        android:contentDescription="@string/ac_skull_icon"/>
+
+    <ImageView
+        android:id="@+id/iv_fire"
+        android:layout_width="@dimen/primary_button_width_normal"
+        android:layout_height="@dimen/primary_button_width_normal"
+        app:layout_constraintTop_toBottomOf="@id/tv_title_whitelist"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/spacing_normal"
+        android:paddingVertical="10dp"
+        android:background="@drawable/icon_fire_small"
+        android:contentDescription="@string/ac_fire_icon"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
