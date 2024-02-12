@@ -1,6 +1,9 @@
 package com.pathfoss.dullphone;
 
+import android.annotation.SuppressLint;
 import android.app.AppOpsManager;
+import android.app.usage.UsageStatsManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
@@ -27,7 +30,7 @@ public class Controller extends AppCompatActivity implements StartServiceListene
 
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor sharedPreferencesEditor;
-
+    private static UsageStatsManager usageStatsManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +41,6 @@ public class Controller extends AppCompatActivity implements StartServiceListene
         sharedPreferences = getSharedPreferences("DullPhone", MODE_PRIVATE);
         sharedPreferencesEditor = sharedPreferences.edit();
         packageManager = getPackageManager();
-
 
         // Check if user opens app first time or returns with an active block
         if (sharedPreferences.getLong("UnlockTime", 0) <= System.currentTimeMillis()) {
@@ -52,6 +54,16 @@ public class Controller extends AppCompatActivity implements StartServiceListene
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         phoneDPI = metrics.densityDpi;
+        usageStatsManager = (UsageStatsManager) getSystemService(Context.USAGE_STATS_SERVICE);
+
+        // Create screen time notification if possible
+        if (sharedPreferences.getBoolean("ScreenTimeEnabled", true)) {
+            Intent intent = new Intent(this, ScreenTimeService.class);
+            intent.setAction(ScreenTimeService.ACTION_STOP_FOREGROUND_SERVICE);
+            startService(intent);
+            intent.setAction(ScreenTimeService.ACTION_START_FOREGROUND_SERVICE);
+            startService(intent);
+        }
     }
 
     // Create method to display the main menu
@@ -189,6 +201,8 @@ public class Controller extends AppCompatActivity implements StartServiceListene
     }
 
     // Create method for redirecting to MainMenu from lateral fragments
+
+    @SuppressLint("MissingSuperCall")
     @Override
     public void onBackPressed() {
         String tag = Objects.requireNonNull(getSupportFragmentManager().findFragmentById(R.id.fcv)).getTag();
@@ -202,4 +216,7 @@ public class Controller extends AppCompatActivity implements StartServiceListene
         return dp * phoneDPI / 160;
     }
 
+    public static UsageStatsManager getUsageStatsManager () {
+        return usageStatsManager;
+    }
 }

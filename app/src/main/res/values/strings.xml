@@ -58,4 +58,5 @@
     <string name="ac_row_image_5">Row Image 5</string>
     <string name="ac_row_image_6">Row Image 6</string>
     <string name="at_close">Close</string>
+    <string name="at_screen_time">Screen Time</string>
 </resources>

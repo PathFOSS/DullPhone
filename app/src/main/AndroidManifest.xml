@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC"/>
     <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
 
@@ -34,17 +35,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.DullPhone"
-        android:name="com.pathfoss.dullphone.OverlayNotification">
+        android:name=".OverlayNotification">
 
         <!-- Enable overlay service -->
         <service
-            android:name="com.pathfoss.dullphone.OverlayService"
+            android:name=".OverlayService"
             android:foregroundServiceType="specialUse"
             android:enabled="true"
             android:stopWithTask="false"/>
 
+        <!-- Enable screen time service-->
+        <service
+            android:name=".ScreenTimeService"
+            android:foregroundServiceType="dataSync"
+            android:enabled="true"
+            android:stopWithTask="false"/>
+
         <!-- Set parameters for main activity -->
-        <activity android:name="com.pathfoss.dullphone.Controller"
+        <activity android:name=".Controller"
             android:exported="true"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity">
@@ -55,7 +63,7 @@
         </activity>
 
         <!-- Create ability to restart application when phone is restarted -->
-        <receiver android:enabled="true" android:name="com.pathfoss.dullphone.BootUpReceiver"
+        <receiver android:enabled="true" android:name=".BootUpReceiver"
             android:permission="android.permission.RECEIVE_BOOT_COMPLETED"
             android:exported="false">
             <intent-filter android:priority="1000">

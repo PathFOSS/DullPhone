@@ -7,6 +7,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
+
 import androidx.core.app.NotificationCompat;
 
 public class OverlayService extends Service {
@@ -48,6 +49,7 @@ public class OverlayService extends Service {
                 .setSmallIcon(R.drawable.ic_stat_name)
                 .setPriority(NotificationManager.IMPORTANCE_MAX)
                 .setCategory(Notification.CATEGORY_SERVICE)
+                .setSilent(true)
                 .build();
         startForeground(2, notification);
     }

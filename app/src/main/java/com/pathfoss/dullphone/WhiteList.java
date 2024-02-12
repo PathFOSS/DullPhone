@@ -85,31 +85,32 @@ public class WhiteList extends Fragment {
                     && !packageName.equals("com.pathfoss.dullphone")
                     && !packageName.equals("com.android.settings")) {
 
-                // Initialize layout elements
-                ConstraintLayout clApp = (ConstraintLayout) inflater.inflate(R.layout.application_list_item, container, false);
+                    // Initialize layout elements
+                    ConstraintLayout clApp = (ConstraintLayout) inflater.inflate(R.layout.application_list_item, container, false);
 
-                ImageView appIcon = clApp.findViewById(R.id.iv);
-                TextView appTitle = clApp.findViewById(R.id.tv);
+                    ImageView appIcon = clApp.findViewById(R.id.iv);
+                    TextView appTitle = clApp.findViewById(R.id.tv);
 
-                // Stylize app containers with identifiers
-                try {
-                    clApp.setTag(packageName);
-                    appIcon.setBackground(packageManager.getApplicationIcon(packageName));
-                    appTitle.setText(appName);
-                } catch (Exception ignored) {}
+                    // Stylize app containers with identifiers
+                    try {
+                        clApp.setTag(packageName);
+                        appIcon.setBackground(packageManager.getApplicationIcon(packageName));
+                        appTitle.setText(appName);
+                    } catch (Exception ignored) {
+                    }
 
-                // Add icons and names in containers
-                whitelistLinearLayout.addView(clApp);
+                    // Add icons and names in containers
+                    whitelistLinearLayout.addView(clApp);
 
-                // Highlight old whitelist applications
-                if (sharedPreferences.getStringSet("WhitelistApps", new HashSet<>()).contains(packageName)) {
-                    allowedApps.add(packageName);
-                    clApp.setBackgroundResource(R.color.natural_white);
-                    appTitle.setTextColor(AppCompatResources.getColorStateList(requireContext(), R.color.black));
-                }
+                    // Highlight old whitelist applications
+                    if (sharedPreferences.getStringSet("WhitelistApps", new HashSet<>()).contains(packageName)) {
+                        allowedApps.add(packageName);
+                        clApp.setBackgroundResource(R.color.natural_white);
+                        appTitle.setTextColor(AppCompatResources.getColorStateList(requireContext(), R.color.black));
+                    }
 
-                // Initialize listener for the application selector
-                createWhitelistAppClickListener(clApp, appTitle);
+                    // Initialize listener for the application selector
+                    createWhitelistAppClickListener(clApp, appTitle);
             }
         }
 

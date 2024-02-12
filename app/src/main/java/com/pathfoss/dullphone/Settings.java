@@ -2,6 +2,7 @@ package com.pathfoss.dullphone;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -28,6 +29,7 @@ public class Settings extends Fragment {
     private AutoCompleteTextView actTaps;
     private Slider sVibration;
     private Slider sWhitelist;
+    private Slider sScreenTime;
 
     private final StartServiceListener startServiceListener;
     private final HashMap<ImageView, int[]> iconMap = new HashMap<>();
@@ -60,6 +62,7 @@ public class Settings extends Fragment {
 
         sVibration = view.findViewById(R.id.s_vibration);
         sWhitelist = view.findViewById(R.id.s_whitelist);
+        sScreenTime = view.findViewById(R.id.s_screen_time);
         actTaps = tilTaps.findViewById(R.id.act);
 
         // Configure dropdown
@@ -74,6 +77,19 @@ public class Settings extends Fragment {
         // Configure toggles
         sVibration.setValue(convertBooleanToFloat(sharedPreferences.getBoolean("TapVibration", false)));
         sWhitelist.setValue(convertBooleanToFloat(sharedPreferences.getBoolean("WhitelistEnabled", true)));
+        sScreenTime.setValue(convertBooleanToFloat(sharedPreferences.getBoolean("ScreenTimeEnabled", true)));
+
+        // Configure screen time toggling
+        sScreenTime.addOnChangeListener((slider, value, fromUser) -> {
+            Intent intent = new Intent(requireContext(), ScreenTimeService.class);
+            if (sharedPreferences.getBoolean("ScreenTimeEnabled", true)) {
+                intent.setAction(ScreenTimeService.ACTION_STOP_FOREGROUND_SERVICE);
+            } else {
+                intent.setAction(ScreenTimeService.ACTION_START_FOREGROUND_SERVICE);
+            }
+            sharedPreferencesEditor.putBoolean("ScreenTimeEnabled", sScreenTime.getValue() == 1f).apply();
+            requireActivity().startService(intent);
+        });
 
         // Set action on exit
         view.findViewById(R.id.ll_back).setOnClickListener(v -> {
