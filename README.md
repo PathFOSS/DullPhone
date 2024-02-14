@@ -17,7 +17,7 @@ You are facing a screen overlay showing the time and progress.
 You will have three functionalities:
 
 1. Open the default phone app
-2. Enable tap to unlock (5000 taps to unlock)
+2. Enable tap to unlock (select number of taps from settings default is 5000)
 3. View whitelist and open allowed applications
 
 If you restart the phone, the overlay will return.
@@ -28,7 +28,7 @@ If you open recent apps, the overlay will return.
 
 If you press the back button, the overlay will return.
 
-If you open an unallowed application, the overlay will return.
+If you open an non-whitelist application, the overlay will return.
 
 If you find a loophole to bypass the screen, please create an issue in the repository.
 
@@ -66,7 +66,7 @@ Solution: Most times requesting the whitelist app to open again should fix this.
 
 ## How to end the block early?
 
-User=friendly method: You can enable tap to unlock mode and tap the screen 5000 times which takes on average 15 minutes of quick tapping.
+User-friendly method: You can enable tap to unlock mode and tap the screen 5000 times which takes on average 15 minutes of quick tapping.
 
 Advanced method: You need to have Developer Options and USB debugging enabled while plugged into the computer. Then run this terminal command: adb shell am force-stop com.pathfoss.dullphone.
 
@@ -75,6 +75,12 @@ Advanced method: You need to have Developer Options and USB debugging enabled wh
 1. Disable all animations in Settings > Developer Options
 2. Disable USB debugging in Settings > Developer Options
 3. Add a minimal amount of apps to whitelist (limits RAM)
+
+## Why is the screen time showing the wrong time?
+
+The screen time notification is an experimental feature and provides widely inaccurate results. Please use with caution.
+
+In the future there will be attempts to improve the accuracy of screen time.
 
 ## Specifications
 
