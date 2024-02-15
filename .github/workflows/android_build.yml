@@ -113,5 +113,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v2
         with:
-          name: Vivoxia.apk
+          name: DulLPhone.apk
           path: app/build/outputs/apk/debug/app-debug.apk
