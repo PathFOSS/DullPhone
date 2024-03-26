@@ -19,7 +19,7 @@ The application is completely Free and Open Source (FOSS) and falls under the GP
 
 ## How to use the app?
 
-1. Select whitelisted apps in the top right corner
+1. Select whitelisted apps in the mid right edge
 2. Pick the number of days, hours, and minutes to block your device
 3. Tap the button, review the block duration, and confirm block
 
