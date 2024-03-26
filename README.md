@@ -4,11 +4,11 @@ Dull Phone is the self-control block timer that every digital native desperately
 
 The application is completely Free and Open Source (FOSS) and falls under the GPLv3 license.
 
-<img align="left" width="20%" height="200px" src="https://github.com/PathFOSS/README-Images/blob/main/DullPhone/block_screen.png"/>
-<img align="left" width="20%" height="200px" src="https://github.com/PathFOSS/README-Images/blob/main/DullPhone/settings.png"/>
-<img align="left" width="20%" height="200px" src="https://github.com/PathFOSS/README-Images/blob/main/DullPhone/tap_to_unlock.png"/>
-<img align="left" width="20%" height="200px" src="https://github.com/PathFOSS/README-Images/blob/main/DullPhone/whitelist_config.png"/>
-<img align="left" width="20%" height="200px" src="https://github.com/PathFOSS/README-Images/blob/main/DullPhone/whitelist.png"/>
+<img align="left" height="200px" src="https://github.com/PathFOSS/README-Images/blob/main/DullPhone/block_screen.png"/>
+<img align="left" height="200px" src="https://github.com/PathFOSS/README-Images/blob/main/DullPhone/settings.png"/>
+<img align="left" height="200px" src="https://github.com/PathFOSS/README-Images/blob/main/DullPhone/tap_to_unlock.png"/>
+<img align="left" height="200px" src="https://github.com/PathFOSS/README-Images/blob/main/DullPhone/whitelist_config.png"/>
+<img align="left" height="200px" src="https://github.com/PathFOSS/README-Images/blob/main/DullPhone/whitelist.png"/>
 
 ## How to use the app?
 
