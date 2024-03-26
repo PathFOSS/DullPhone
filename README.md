@@ -4,18 +4,8 @@ Dull Phone is the self-control block timer that every digital native desperately
 
 The application is completely Free and Open Source (FOSS) and falls under the GPLv3 license.
 
-<img align="left" height="200px" src="https://github.com/PathFOSS/README-Images/blob/main/DullPhone/block_screen.png"/>
-<img align="left" height="200px" src="https://github.com/PathFOSS/README-Images/blob/main/DullPhone/settings.png"/>
-<img align="left" height="200px" src="https://github.com/PathFOSS/README-Images/blob/main/DullPhone/whitelist_config.png"/>
+<img align="left" height="200px" src="https://github.com/PathFOSS/README-Images/blob/main/DullPhone/collage.png"/>
 
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
 <br/>
 <br/>
 <br/>
