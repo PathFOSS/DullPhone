@@ -10,24 +10,15 @@ The application is completely Free and Open Source (FOSS) and falls under the GP
 <img align="left" height="200px" src="https://github.com/PathFOSS/README-Images/blob/main/DullPhone/whitelist_config.png"/>
 <img align="left" height="200px" src="https://github.com/PathFOSS/README-Images/blob/main/DullPhone/whitelist.png"/>
 
-##  
+<br/>
+<br/>
+<br/>
+<br/>
+## How to use the app?
 
-<pre>
-
-
-
-
-
-
-
-  
-  ## How to use the app?
-
-  1. Select whitelisted apps in the top right corner
-  2. Pick the number of days, hours, and minutes to block your device
-  3. Tap the button, review the block duration, and confirm block
-</pre>
-
+1. Select whitelisted apps in the top right corner
+2. Pick the number of days, hours, and minutes to block your device
+3. Tap the button, review the block duration, and confirm block
 
 ## What happens during the block?
 
