@@ -10,6 +10,8 @@ The application is completely Free and Open Source (FOSS) and falls under the GP
 <img align="left" height="200px" src="https://github.com/PathFOSS/README-Images/blob/main/DullPhone/whitelist_config.png"/>
 <img align="left" height="200px" src="https://github.com/PathFOSS/README-Images/blob/main/DullPhone/whitelist.png"/>
 
+##  
+
 <pre>
 
 
