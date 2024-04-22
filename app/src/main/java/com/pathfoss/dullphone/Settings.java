@@ -32,6 +32,7 @@ public class Settings extends Fragment {
     private Slider sScreenTime;
 
     private final StartServiceListener startServiceListener;
+    private final UsagePermissionListener usagePermissionListener;
     private final HashMap<ImageView, int[]> iconMap = new HashMap<>();
     private final String[] tapsList = {"1000", "2000", "5000", "10000", "25000","50000", "100000"};
 
@@ -39,8 +40,9 @@ public class Settings extends Fragment {
     private SharedPreferences.Editor sharedPreferencesEditor;
 
     // Create constructor to pass the StartServiceListener interface
-    public Settings (StartServiceListener startServiceListener) {
+    public Settings (StartServiceListener startServiceListener, UsagePermissionListener usagePermissionListener) {
         this.startServiceListener = startServiceListener;
+        this.usagePermissionListener = usagePermissionListener;
     }
 
     @Override
@@ -77,18 +79,26 @@ public class Settings extends Fragment {
         // Configure toggles
         sVibration.setValue(convertBooleanToFloat(sharedPreferences.getBoolean("TapVibration", false)));
         sWhitelist.setValue(convertBooleanToFloat(sharedPreferences.getBoolean("WhitelistEnabled", true)));
-        sScreenTime.setValue(convertBooleanToFloat(sharedPreferences.getBoolean("ScreenTimeEnabled", true)));
+        sScreenTime.setValue(convertBooleanToFloat(sharedPreferences.getBoolean("ScreenTimeEnabled", false)));
 
         // Configure screen time toggling
         sScreenTime.addOnChangeListener((slider, value, fromUser) -> {
+
             Intent intent = new Intent(requireContext(), ScreenTimeService.class);
-            if (sharedPreferences.getBoolean("ScreenTimeEnabled", true)) {
+            if (sharedPreferences.getBoolean("ScreenTimeEnabled", false)) {
                 intent.setAction(ScreenTimeService.ACTION_STOP_FOREGROUND_SERVICE);
+                sharedPreferencesEditor.putBoolean("ScreenTimeEnabled", sScreenTime.getValue() == 1f).apply();
+                requireActivity().startService(intent);
             } else {
-                intent.setAction(ScreenTimeService.ACTION_START_FOREGROUND_SERVICE);
+                if (Controller.usageAccess) {
+                    intent.setAction(ScreenTimeService.ACTION_START_FOREGROUND_SERVICE);
+                    sharedPreferencesEditor.putBoolean("ScreenTimeEnabled", sScreenTime.getValue() == 1f).apply();
+                    requireActivity().startService(intent);
+                } else {
+                    sScreenTime.setValue(0f);
+                    requestUsagePermission();
+                }
             }
-            sharedPreferencesEditor.putBoolean("ScreenTimeEnabled", sScreenTime.getValue() == 1f).apply();
-            requireActivity().startService(intent);
         });
 
         // Set action on exit
@@ -98,7 +108,7 @@ public class Settings extends Fragment {
             sharedPreferencesEditor.putBoolean("WhitelistEnabled", sWhitelist.getValue() == 1f).apply();
 
             Toast.makeText(requireContext(), "Settings saved", Toast.LENGTH_SHORT).show();
-            getParentFragmentManager().beginTransaction().replace(R.id.fcv, new MainMenu(startServiceListener)).commit();
+            getParentFragmentManager().beginTransaction().replace(R.id.fcv, new MainMenu(startServiceListener, usagePermissionListener)).commit();
         });
 
         // Create hashmap for icon set
@@ -132,11 +142,22 @@ public class Settings extends Fragment {
         });
     }
 
+    // Create method for creating a dialog to enable "Permit usage access" permission
+    private void requestUsagePermission() {
+        new UsagePermissionConfirm(startServiceListener).show(getParentFragmentManager(), "Usage Permission Dialog");
+    }
+
     // Create method to convert from boolean to float
     private float convertBooleanToFloat (boolean bool) {
         if (bool) {
             return 1f;
         }
         return 0f;
+    }
+
+    @Override
+    public void onResume() {
+        usagePermissionListener.onUserReturn();
+        super.onResume();
     }
 }

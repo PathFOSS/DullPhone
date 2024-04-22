@@ -27,6 +27,7 @@ public class MainMenu extends Fragment {
     private ConstraintLayout clRow;
 
     private final StartServiceListener startServiceListener;
+    private final UsagePermissionListener usagePermissionListener;
 
     private SharedPreferences sharedPreferences;
     private PackageManager packageManager;
@@ -34,8 +35,9 @@ public class MainMenu extends Fragment {
     private int currentImage = 0;
 
     // Create constructor to pass the StartServiceListener interface
-    public MainMenu (StartServiceListener startServiceListener) {
+    public MainMenu (StartServiceListener startServiceListener, UsagePermissionListener usagePermissionListener) {
         this.startServiceListener = startServiceListener;
+        this.usagePermissionListener = usagePermissionListener;
     }
 
     @Override
@@ -65,8 +67,8 @@ public class MainMenu extends Fragment {
 
         // Set button listeners
         view.findViewById(R.id.ib_start).setOnClickListener(v -> startServiceListener.serviceStartRequested(dayPicker.getValue(), hourPicker.getValue(), minutePicker.getValue()));
-        view.findViewById(R.id.ll_settings).setOnClickListener(v -> getParentFragmentManager().beginTransaction().replace(R.id.fcv, new Settings(startServiceListener), "Settings").commit());
-        view.findViewById(R.id.ll_edit).setOnClickListener(v -> getParentFragmentManager().beginTransaction().replace(R.id.fcv, new WhiteList(startServiceListener), "WhiteList").commit());
+        view.findViewById(R.id.ll_settings).setOnClickListener(v -> getParentFragmentManager().beginTransaction().replace(R.id.fcv, new Settings(startServiceListener, usagePermissionListener), "Settings").commit());
+        view.findViewById(R.id.ll_edit).setOnClickListener(v -> getParentFragmentManager().beginTransaction().replace(R.id.fcv, new WhiteList(startServiceListener, usagePermissionListener), "WhiteList").commit());
 
         // Order whitelist apps alphabetically
         SortedMap<String, String> sortedAppList = new TreeMap<>();

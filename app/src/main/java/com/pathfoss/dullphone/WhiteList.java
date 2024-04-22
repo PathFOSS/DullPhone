@@ -33,6 +33,7 @@ import java.util.TreeMap;
 public class WhiteList extends Fragment {
 
     private final StartServiceListener startServiceListener;
+    private final UsagePermissionListener usagePermissionListener;
     private final ArrayList<String> allowedApps = new ArrayList<>();
 
     private PackageManager packageManager;
@@ -40,8 +41,9 @@ public class WhiteList extends Fragment {
     private SharedPreferences.Editor sharedPreferencesEditor;
 
     // Create constructor to pass the StartServiceListener interface
-    public WhiteList (StartServiceListener startServiceListener) {
+    public WhiteList (StartServiceListener startServiceListener, UsagePermissionListener usagePermissionListener) {
         this.startServiceListener = startServiceListener;
+        this.usagePermissionListener = usagePermissionListener;
     }
 
     @Override
@@ -115,7 +117,7 @@ public class WhiteList extends Fragment {
         }
 
         view.findViewById(R.id.ll_back).setOnClickListener(v -> {
-            getParentFragmentManager().beginTransaction().replace(R.id.fcv, new MainMenu(startServiceListener)).commit();
+            getParentFragmentManager().beginTransaction().replace(R.id.fcv, new MainMenu(startServiceListener, usagePermissionListener)).commit();
             sharedPreferencesEditor.putStringSet("WhitelistApps", new HashSet<>(allowedApps)).apply();
             Toast.makeText(requireContext(), "Whitelist saved", Toast.LENGTH_SHORT).show();
         });

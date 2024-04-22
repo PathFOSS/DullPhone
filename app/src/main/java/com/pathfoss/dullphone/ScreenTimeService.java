@@ -7,6 +7,7 @@ import android.app.Service;
 import android.app.usage.UsageStats;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.IBinder;
@@ -31,6 +32,9 @@ public class ScreenTimeService extends Service {
     private Calendar midnightToday;
     private Map<String, UsageStats> lUsageStatsMap;
     private String timeText = "0h 0m";
+    private long carry;
+
+    private SharedPreferences.Editor sharedPreferencesEditor;
 
     private long midnightTomorrow;
     private long screenTime = 0;
@@ -53,25 +57,34 @@ public class ScreenTimeService extends Service {
                     break;
             }
         }
-        return START_NOT_STICKY;
+        return START_STICKY;
     }
 
     // Create notification channel
     private void startForegroundService() {
+
+        SharedPreferences sharedPreferences = getSharedPreferences("DullPhone", MODE_PRIVATE);
+        sharedPreferencesEditor = sharedPreferences.edit();
+
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         assert notificationManager != null;
         notificationManager.createNotificationChannel(new NotificationChannel("Dull Phone", "ScreenTime", NotificationManager.IMPORTANCE_LOW));
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, "Dull Phone");
 
-        setTimeBounds();
+        setTimeBounds(true);
         notification =  notificationBuilder
                 .setContentTitle("Screen time")
                 .setContentText(timeText)
                 .setSmallIcon(R.drawable.ic_stat_name)
                 .setPriority(NotificationManager.IMPORTANCE_LOW)
                 .setCategory(Notification.CATEGORY_PROGRESS)
-                .setSilent(true);
+                .setSilent(true)
+                .setOngoing(true);
+
+        if (sharedPreferences.getLong("Carry", 0) < 0 && sharedPreferences.getLong("CarrySetTime", 0) == midnightToday.getTimeInMillis()) {
+            carry = sharedPreferences.getLong("Carry", 0);
+        }
 
         lUsageStatsMap = Controller.getUsageStatsManager().queryAndAggregateUsageStats(midnightToday.getTimeInMillis(), midnightTomorrow);
         startForeground(1, notification.build());
@@ -83,16 +96,11 @@ public class ScreenTimeService extends Service {
                 if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(context, "Please enable notifications to view screen time", Toast.LENGTH_SHORT).show();
                 } else {
-                    if (midnightTomorrow<= System.currentTimeMillis()) {
-                        setTimeBounds();
+                    if (midnightTomorrow + 60 * 1000 <= System.currentTimeMillis()) {
+                        setTimeBounds(false);
                     }
 
-                    lUsageStatsMap = Controller.getUsageStatsManager().queryAndAggregateUsageStats(midnightToday.getTimeInMillis(), midnightTomorrow);
-                    screenTime = 0;
-
-                    for (String packageName : lUsageStatsMap.keySet()) {
-                        screenTime += Objects.requireNonNull(lUsageStatsMap.get(packageName)).getTotalTimeInForeground();
-                    }
+                    screenTime = getScreenTime();
 
                     int hours = (int) (screenTime / 3600000);
                     int minutes = (int) ((screenTime - hours * 3600000) / 60000);
@@ -108,13 +116,42 @@ public class ScreenTimeService extends Service {
     }
 
     // Create a method to set a midnight-to-midnight tracking period
-    private void setTimeBounds() {
+    private void setTimeBounds(boolean initialization) {
         midnightToday = Calendar.getInstance();
         midnightToday.set(Calendar.HOUR_OF_DAY, 0);
         midnightToday.set(Calendar.MINUTE, 0);
         midnightToday.set(Calendar.SECOND, 0);
         midnightToday.set(Calendar.MILLISECOND, 0);
         midnightTomorrow = midnightToday.getTimeInMillis() + 24 * 60 * 60 * 1000;
+
+        if (!initialization) {
+            setCarry();
+        }
+    }
+
+    // Create a method to loop through usage stats and set carryover value to decrement
+    private void setCarry () {
+        Map<String, UsageStats> carryoverUsageStatsMap = Controller.getUsageStatsManager().queryAndAggregateUsageStats(midnightToday.getTimeInMillis(), midnightTomorrow);
+        carry = 0;
+
+        for (String packageName : carryoverUsageStatsMap.keySet()) {
+            carry -= Objects.requireNonNull(carryoverUsageStatsMap.get(packageName)).getTotalTimeInForeground();
+        }
+        carry -= getScreenTime();
+
+        sharedPreferencesEditor.putLong("CarrySetTime", midnightToday.getTimeInMillis()).apply();
+        sharedPreferencesEditor.putLong("Carry", carry).apply();
+    }
+
+    // Create a method to loop through usage stats and increment screen time
+    private long getScreenTime () {
+        lUsageStatsMap = Controller.getUsageStatsManager().queryAndAggregateUsageStats(midnightToday.getTimeInMillis(), midnightTomorrow);
+        long time = carry;
+
+        for (String packageName : lUsageStatsMap.keySet()) {
+            time += Objects.requireNonNull(lUsageStatsMap.get(packageName)).getTotalTimeInForeground();
+        }
+        return time;
     }
 
     // Create a method to kill the service on request

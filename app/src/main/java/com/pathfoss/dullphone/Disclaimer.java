@@ -14,10 +14,12 @@ import androidx.fragment.app.Fragment;
 public class Disclaimer extends Fragment {
 
     private final StartServiceListener startServiceListener;
+    private final UsagePermissionListener usagePermissionListener;
 
     // Create constructor to pass the StartServiceListener interface
-    public Disclaimer (StartServiceListener startServiceListener) {
+    public Disclaimer (StartServiceListener startServiceListener, UsagePermissionListener usagePermissionListener) {
         this.startServiceListener = startServiceListener;
+        this.usagePermissionListener = usagePermissionListener;
     }
 
     @Nullable
@@ -30,7 +32,7 @@ public class Disclaimer extends Fragment {
         // Create a listener to confirm accepted terms
         view.findViewById(R.id.b_accept).setOnClickListener(v -> {
             requireContext().getSharedPreferences("DullPhone", MODE_PRIVATE).edit().putBoolean("TermsAccepted", true).apply();
-            getParentFragmentManager().beginTransaction().replace(R.id.fcv, new MainMenu(startServiceListener)).commit();
+            getParentFragmentManager().beginTransaction().replace(R.id.fcv, new MainMenu(startServiceListener, usagePermissionListener)).commit();
         });
 
         return view;

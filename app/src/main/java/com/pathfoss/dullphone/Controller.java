@@ -21,9 +21,10 @@ import androidx.fragment.app.Fragment;
 import java.util.Calendar;
 import java.util.Objects;
 
-public class Controller extends AppCompatActivity implements StartServiceListener {
+public class Controller extends AppCompatActivity implements StartServiceListener, UsagePermissionListener {
 
     public static Vibrator vibrator;
+    public static boolean usageAccess = false;
     private static int phoneDPI;
 
     private PackageManager packageManager;
@@ -45,9 +46,9 @@ public class Controller extends AppCompatActivity implements StartServiceListene
         // Check if user opens app first time or returns with an active block
         if (sharedPreferences.getLong("UnlockTime", 0) <= System.currentTimeMillis()) {
             if (!sharedPreferences.getBoolean("TermsAccepted", false)) {
-                initializeLayout(new Disclaimer(this), "Disclaimer");
+                initializeLayout(new Disclaimer(this, this), "Disclaimer");
             } else {
-                initializeLayout(new MainMenu(this), "MainMenu");
+                initializeLayout(new MainMenu(this, this), "MainMenu");
             }
         }
 
@@ -57,13 +58,15 @@ public class Controller extends AppCompatActivity implements StartServiceListene
         usageStatsManager = (UsageStatsManager) getSystemService(Context.USAGE_STATS_SERVICE);
 
         // Create screen time notification if possible
-        if (sharedPreferences.getBoolean("ScreenTimeEnabled", true)) {
+        if (sharedPreferences.getBoolean("ScreenTimeEnabled", false)) {
             Intent intent = new Intent(this, ScreenTimeService.class);
             intent.setAction(ScreenTimeService.ACTION_STOP_FOREGROUND_SERVICE);
             startService(intent);
             intent.setAction(ScreenTimeService.ACTION_START_FOREGROUND_SERVICE);
             startService(intent);
         }
+
+        usageAccess = isAccessGranted();
     }
 
     // Create method to display the main menu
@@ -147,10 +150,12 @@ public class Controller extends AppCompatActivity implements StartServiceListene
     }
 
     // Create method for creating a dialog to enable "Permit usage access" permission
-    private void checkUsagePermission() {
+    private void checkUsagePermission(boolean calledInternally) {
+
+        usageAccess = isAccessGranted();
 
         // Check if app permits usage access and create OnClickListener for "Open Settings" link
-        if (!isAccessGranted()) {
+        if (!usageAccess && calledInternally) {
             new UsagePermissionConfirm(this).show(getSupportFragmentManager(), "Usage Permission Dialog");
         }
     }
@@ -173,7 +178,7 @@ public class Controller extends AppCompatActivity implements StartServiceListene
             sharedPreferencesEditor.putInt("TapsToUnlock", sharedPreferences.getInt("TapsToUnlockPreference", 5000));
             new BlockConfirm(this, modifyCalendarInstance(Calendar.getInstance(), days, hours, minutes)).show(getSupportFragmentManager(), "Confirm Block");
         } else {
-            checkUsagePermission();
+            checkUsagePermission(true);
             checkOverlayPermission();
         }
     }
@@ -201,13 +206,12 @@ public class Controller extends AppCompatActivity implements StartServiceListene
     }
 
     // Create method for redirecting to MainMenu from lateral fragments
-
     @SuppressLint("MissingSuperCall")
     @Override
     public void onBackPressed() {
         String tag = Objects.requireNonNull(getSupportFragmentManager().findFragmentById(R.id.fcv)).getTag();
         if (Objects.equals(tag, "Settings") || Objects.equals(tag, "WhiteList")) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fcv, new MainMenu(this), "MainMenu").commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fcv, new MainMenu(this, this), "MainMenu").commit();
         }
     }
 
@@ -216,7 +220,14 @@ public class Controller extends AppCompatActivity implements StartServiceListene
         return dp * phoneDPI / 160;
     }
 
+    // Create method to return the UsageStatsManager
     public static UsageStatsManager getUsageStatsManager () {
         return usageStatsManager;
+    }
+
+    // Implement method to recheck the Usage permission status
+    @Override
+    public void onUserReturn() {
+        checkUsagePermission(false);
     }
 }
