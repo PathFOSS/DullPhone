@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -18,10 +19,13 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.slider.RangeSlider;
 import com.google.android.material.slider.Slider;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 public class Settings extends Fragment {
@@ -30,6 +34,10 @@ public class Settings extends Fragment {
     private Slider sVibration;
     private Slider sWhitelist;
     private Slider sScreenTime;
+    private RangeSlider rsWhitelistActive;
+    private TextView tvTitleWhitelistActive;
+    private TextView tvTimeValueStart;
+    private TextView tvTimeValueEnd;
 
     private final StartServiceListener startServiceListener;
     private final UsagePermissionListener usagePermissionListener;
@@ -67,6 +75,11 @@ public class Settings extends Fragment {
         sScreenTime = view.findViewById(R.id.s_screen_time);
         actTaps = tilTaps.findViewById(R.id.act);
 
+        rsWhitelistActive = view.findViewById(R.id.rs_active_whitelist);
+        tvTitleWhitelistActive = view.findViewById(R.id.tv_title_active_whitelist);
+        tvTimeValueStart = view.findViewById(R.id.tv_value_start_active_whitelist);
+        tvTimeValueEnd = view.findViewById(R.id.tv_value_stop_active_whitelist);
+
         // Configure dropdown
         actTaps.setDropDownBackgroundDrawable(AppCompatResources.getDrawable(requireContext(), R.drawable.background_dropdown));
 
@@ -76,10 +89,26 @@ public class Settings extends Fragment {
         actTaps.setAdapter(arrayAdapter);
         actTaps.setText(String.valueOf(sharedPreferences.getInt("TapsToUnlockPreference", 5000)), false);
 
+        // Toggle time RangeSlider on whitelist toggled
+        sWhitelist.addOnChangeListener((slider, value, fromUser) -> {
+            if (value == 1f) {
+                toggleWhiteListRangeSlider(View.VISIBLE);
+            } else {
+                toggleWhiteListRangeSlider(View.GONE);
+            }
+        });
+
         // Configure toggles
         sVibration.setValue(convertBooleanToFloat(sharedPreferences.getBoolean("TapVibration", false)));
         sWhitelist.setValue(convertBooleanToFloat(sharedPreferences.getBoolean("WhitelistEnabled", true)));
         sScreenTime.setValue(convertBooleanToFloat(sharedPreferences.getBoolean("ScreenTimeEnabled", false)));
+
+        // Configure whitelist range
+        List<Float> whitelistRange = new ArrayList<>();
+        whitelistRange.add((float) (sharedPreferences.getInt("WhitelistActiveStart", 0) / (60 * 1000)));
+        whitelistRange.add((float) (sharedPreferences.getInt("WhitelistActiveStop", 24 * 60 * 60 * 1000) / (60 * 1000)));
+        rsWhitelistActive.setValues(whitelistRange);
+        setWhitelistRange();
 
         // Configure screen time toggling
         sScreenTime.addOnChangeListener((slider, value, fromUser) -> {
@@ -101,11 +130,16 @@ public class Settings extends Fragment {
             }
         });
 
+        // Set RangeSlider functionality
+        rsWhitelistActive.addOnChangeListener((rangeSlider, v, b) -> setWhitelistRange());
+
         // Set action on exit
         view.findViewById(R.id.ll_back).setOnClickListener(v -> {
             sharedPreferencesEditor.putInt("TapsToUnlockPreference", Integer.parseInt(actTaps.getText().toString())).apply();
             sharedPreferencesEditor.putBoolean("TapVibration", sVibration.getValue() == 1f).apply();
             sharedPreferencesEditor.putBoolean("WhitelistEnabled", sWhitelist.getValue() == 1f).apply();
+            sharedPreferencesEditor.putInt("WhitelistActiveStart", (int) (rsWhitelistActive.getValues().get(0) * 60 * 1000)).apply();
+            sharedPreferencesEditor.putInt("WhitelistActiveStop", (int) (rsWhitelistActive.getValues().get(1) * 60 * 1000)).apply();
 
             Toast.makeText(requireContext(), "Settings saved", Toast.LENGTH_SHORT).show();
             getParentFragmentManager().beginTransaction().replace(R.id.fcv, new MainMenu(startServiceListener, usagePermissionListener)).commit();
@@ -134,6 +168,17 @@ public class Settings extends Fragment {
         }
     }
 
+    // Create method to set TextViews with whitelist start and end times
+    private void setWhitelistRange() {
+        List<Float> valArray = rsWhitelistActive.getValues();
+
+        String startTime = getTimeNumber(valArray.get(0) / 60, true) + ":" + getTimeNumber(valArray.get(0) % 60, false);
+        String endTime = getTimeNumber(valArray.get(1) / 60, true) + ":" + getTimeNumber(valArray.get(1) % 60, false);
+
+        tvTimeValueStart.setText(startTime);
+        tvTimeValueEnd.setText(endTime);
+    }
+
     // Create method to set an icon element listener
     private void setIconListener(@NonNull ImageView imageView) {
         imageView.setOnClickListener( v -> {
@@ -142,9 +187,30 @@ public class Settings extends Fragment {
         });
     }
 
+
+    // Create method to toggle whitelist RangeSlider
+    private void toggleWhiteListRangeSlider(int visible) {
+        rsWhitelistActive.setVisibility(visible);
+        tvTitleWhitelistActive.setVisibility(visible);
+        tvTimeValueStart.setVisibility(visible);
+        tvTimeValueEnd.setVisibility(visible);
+    }
+
     // Create method for creating a dialog to enable "Permit usage access" permission
     private void requestUsagePermission() {
         new UsagePermissionConfirm(startServiceListener).show(getParentFragmentManager(), "Usage Permission Dialog");
+    }
+
+    // Create method to get consistent time numbers
+    @NonNull
+    private String getTimeNumber(float input, boolean hour) {
+        int output = (int) input;
+        if (output < 10) {
+            return "0" + output;
+        } else if (output >= 24 && hour) {
+            return "00";
+        }
+        return String.valueOf(output);
     }
 
     // Create method to convert from boolean to float

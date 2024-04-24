@@ -67,17 +67,17 @@ Problem: You may be able to temporarily escape by spamming and swiping the syste
 
 Solution: Enable Developer Options and disable all animations
 
-#### Time is up but overlay is still showing
-
-Problem: Timer runs out but you still cannot close the app. This is quite unlikely.
-
-Solution: Restart the phone. The overlay service recognizes that the timer is less than current time and will not block the phone anymore.
-
 #### App return when opening a whitelisted app
 
 Problem: The overlay returns to foreground when requesting to open a whitelisted app.
 
 Solution: Most times requesting the whitelist app to open again should fix this.
+
+#### The whitelist is disabled at this time but I can still use the whitelisted apps
+
+Problem: The overlay is not showing when a user navigates to a whitelisted app and the whitelist is scheduled to deactivate.
+
+Solution: No good solution yet, but the whitelist disabling will immediately take effect upon returning to the block screen. 
 
 ## How to end the block early?
 
@@ -93,21 +93,23 @@ Advanced method: You need to have Developer Options and USB debugging enabled wh
 
 ## Why is the screen time showing the wrong time?
 
-The screen time notification is an experimental feature and provides widely inaccurate results. Please use with caution.
+The screen time notification is an experimental feature and may provide inaccurate results. Please use with caution.
 
 In the future there will be attempts to improve the accuracy of screen time.
+
+It is important to note that if the phone is not on at midnight, the Android usage stats manager adds a seemingly random offset of time to the actual usage time.
 
 ## Specifications
 
 Name: Dull Phone
 
-Newest version: 2.0.1
+Newest version: 2.4.0
 
 Supported Android version: 8.0 and above
 
 Application size: ~ 5 MB
 
-Maximum blocking time: ~ 31 days
+Maximum blocking time: ~ 365 days
 
 Officially supported devices: Phones only (tablets and wearables have never been tested)
 

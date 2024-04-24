@@ -32,6 +32,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -77,6 +78,9 @@ public class OverlayScreen {
     private boolean whitelistToggled = false;
 
     private long timeRemaining;
+    private long midnightTomorrow;
+    private long whiteListStart;
+    private long whiteListStop;
     private int currentImage = 0;
 
     @SuppressLint("InflateParams")
@@ -122,7 +126,6 @@ public class OverlayScreen {
         hideImageButtons();
 
         // Initialize all timers and whitelist applications' layout
-        startEndTimer();
         startBlockTimer(view.findViewById(R.id.tv_hour), view.findViewById(R.id.tv_minute), view.findViewById(R.id.tv_second));
         startForegroundMonitorTimer(sharedPreferences.getStringSet("WhitelistApps", new HashSet<>()), sharedPreferences.getString("DefaultDialer", "com.android.dialer"), (UsageStatsManager) (context.getSystemService(Context.USAGE_STATS_SERVICE)));
 
@@ -136,6 +139,21 @@ public class OverlayScreen {
         createTapModeToggleListener(view.findViewById(R.id.ib_tap_toggle));
         createTapCounterListener();
         startSystemNavigationListener();
+
+        // Set day range boundaries to enable whitelist range checks
+        setTimeBounds();
+    }
+
+    // Create method to set midnight today and tomorrow for whitelist day boundaries
+    private void setTimeBounds () {
+        Calendar midnightToday = Calendar.getInstance();
+        midnightToday.set(Calendar.HOUR_OF_DAY, 0);
+        midnightToday.set(Calendar.MINUTE, 0);
+        midnightToday.set(Calendar.SECOND, 0);
+        midnightToday.set(Calendar.MILLISECOND, 0);
+        whiteListStart = midnightToday.getTimeInMillis() + sharedPreferences.getInt("WhitelistActiveStart", 0);
+        whiteListStop = midnightToday.getTimeInMillis() + sharedPreferences.getInt("WhitelistActiveStop", 86400000);
+        midnightTomorrow = midnightToday.getTimeInMillis() + 86400000;
     }
 
     // Create method for counting taps in tap to leave mode
@@ -259,7 +277,8 @@ public class OverlayScreen {
     // Create method for generating OnClickListeners for whitelisted apps
     private void createWhitelistAppClickListener (ImageView imageView, String packageName) {
         new Handler().post(() -> imageView.setOnClickListener(v -> {
-            if (System.currentTimeMillis() - sharedPreferences.getLong("HomePressed", 0) > 5000) {
+            long currentTime = System.currentTimeMillis();
+            if (currentTime - sharedPreferences.getLong("HomePressed", 0) > 5000 && whiteListStart < currentTime && whiteListStop > currentTime) {
                 launchWhitelistApp(packageName);
             }
         }));
@@ -282,11 +301,6 @@ public class OverlayScreen {
         whitelistToggled = !whitelistToggled;
     }
 
-    // Create method to end the block
-    private void startEndTimer () {
-        new Handler().postDelayed(this::endBlock, timeRemaining);
-    }
-
     // Create method to display remaining time and prevent user escape
     private void startBlockTimer (TextView hourText, TextView minuteText, TextView secondText) {
 
@@ -306,15 +320,32 @@ public class OverlayScreen {
                 int progress = Math.round(((float) (fixedTimeLeft - goalTime + System.currentTimeMillis()) / (float) fixedTimeLeft) * (10000));
 
                 mainThreadHandler.post(() -> {
-                    hourText.setText(String.valueOf(hours));
-                    minuteText.setText(String.valueOf(minutes));
-                    secondText.setText(String.valueOf(seconds));
+                    hourText.setText(getTimeNumber(hours));
+                    minuteText.setText(getTimeNumber(minutes));
+                    secondText.setText(getTimeNumber(seconds));
                     pbTime.setProgress(progress);
                 });
 
-                workerThreadHandler.postDelayed(this, 1000 - timeLeft + goalTime - System.currentTimeMillis());
+                if (midnightTomorrow < System.currentTimeMillis()) {
+                    setTimeBounds();
+                }
+
+                if (timeLeft > 0) {
+                    workerThreadHandler.postDelayed(this, 1000 - timeLeft + goalTime - System.currentTimeMillis());
+                } else {
+                    endBlock();
+                }
             }
         });
+    }
+
+    // Create method to get consistent time numbers
+    @NonNull
+    private String getTimeNumber(int input) {
+        if (input < 10) {
+            return "0" + input;
+        }
+        return String.valueOf(input);
     }
 
     // Create a method to prevent disallowed apps to run in the foreground
@@ -335,13 +366,11 @@ public class OverlayScreen {
                 if (sharedPreferences.getLong("UserLeaveTime", 0) > currentTime - 100
                         && !sharedPreferences.getBoolean("UsingWhitelistApp", false)
                         && sharedPreferences.getLong("TimeRestarted", 0) < currentTime - 1000) {
-
                     restartActivity();
                 } else {
                     for (UsageStats app : appList) {
                         if (app.getPackageName().contains("com.android.settings") && app.getLastTimeUsed() >= currentTime - 100) {
                             sharedPreferencesEditor.putBoolean("UsingWhitelistApp", false).apply();
-
                             restartActivity();
                             break;
                         }

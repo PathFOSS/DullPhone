@@ -54,7 +54,7 @@ public class BlockConfirm extends DialogFragment {
                 int minutes = (int) (timeLeft - hours * 3600000) / 60000;
                 int seconds = (int) (timeLeft - hours * 3600000 - minutes * 60000) / 1000;
 
-                String timeText = hours + " h   " + minutes + " m   " + seconds + " s";
+                String timeText = getTimeNumber(hours) + "h  " + getTimeNumber(minutes) + "m  " + getTimeNumber(seconds) + "s";
                 tvTime.setText(timeText);
 
                 if (timeLeft > 0) {
@@ -82,6 +82,15 @@ public class BlockConfirm extends DialogFragment {
         });
 
         return view;
+    }
+
+    // Create method to get consistent time numbers
+    @NonNull
+    private String getTimeNumber(int input) {
+        if (input < 10) {
+            return "0" + input;
+        }
+        return String.valueOf(input);
     }
 
     // Create method to draw the dialog window with proper parameters

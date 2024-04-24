@@ -59,4 +59,8 @@
     <string name="ac_row_image_6">Row Image 6</string>
     <string name="at_close">Close</string>
     <string name="at_screen_time">Screen Time</string>
+    <string name="at_block_whitelist">Block Whitelist</string>
+    <string name="at_midnight">00:00</string>
+    <string name="at_whitelist_active">Whitelist Active</string>
+    <string name="at_midnight_2">24:00</string>
 </resources>

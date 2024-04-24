@@ -109,4 +109,9 @@
         <item name="android:stepSize">1</item>
     </style>
 
+    <style name="dullphone_time_range_slider" parent="dullphone_slider">
+        <item name="android:valueFrom">0.0</item>
+        <item name="android:valueTo">1440.0</item>
+        <item name="android:stepSize">5.0</item>
+    </style>
 </resources>
