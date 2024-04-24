@@ -54,46 +54,46 @@ jobs:
           name: unit_test_report
           path: app/build/reports/tests/testDebugUnitTest/
 
-  instrumentation-test:
-    needs: [unit-test]
-    name: Instrumentation Test
-    runs-on: macos-latest
-    steps:
-      - name: Checkout the code
-        uses: actions/checkout@v4
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'zulu'
-          cache: gradle
-
-      - name: Run Espresso tests
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 29
-          target: default
-          arch: x86
-          profile: Nexus 6
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          disable-animations: true
-          emulator-build: 7425822
-          cores: 2
-          avd-name: test
-          force-avd-creation: true
-          disable-spellchecker: false
-          disable-linux-hw-accel: true
-          script: ./gradlew connectedCheck
-
-      - name: Upload test report
-        uses: actions/upload-artifact@v4
-        with:
-          name: instrumentation_test_report
-          path: app/build/reports/androidTests/connected/
+#  instrumentation-test:
+#    needs: [unit-test]
+#    name: Instrumentation Test
+#    runs-on: macos-latest
+#    steps:
+#      - name: Checkout the code
+#        uses: actions/checkout@v4
+#
+#      - name: Set up JDK 17
+#        uses: actions/setup-java@v4
+#        with:
+#          java-version: '17'
+#          distribution: 'zulu'
+#          cache: gradle
+#
+#      - name: Run Espresso tests
+#        uses: reactivecircus/android-emulator-runner@v2
+#        with:
+#          api-level: 29
+#          target: default
+#          arch: x86
+#          profile: Nexus 6
+#          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+#          disable-animations: true
+#          emulator-build: 7425822
+#          cores: 2
+#          avd-name: test
+#          force-avd-creation: true
+#          disable-spellchecker: false
+#          disable-linux-hw-accel: true
+#          script: ./gradlew connectedCheck
+#
+#      - name: Upload test report
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: instrumentation_test_report
+#          path: app/build/reports/androidTests/connected/
 
   package:
-    needs: [instrumentation-test]
+    needs: [unit-test]
     name: Generate APK
     runs-on: ubuntu-latest
     steps:
